@@ -1,17 +1,12 @@
-#include "arch_hsvm.h"
+#include "arch/source/hsvm.h"
 
 #include "bt/btins.h"
 
 #include <stdio.h>
 
-const struct arch arch_hsvm = {
-    (struct list * (*) (const void * buf, size_t size)) arch_hsvm_translate_ins,
-    (struct list * (*) (const void * buf, size_t size)) arch_hsvm_translate_block
-};
-
-struct hsvm_register = {
-    unsigned int value,
-    const char * identifier
+struct hsvm_register {
+    unsigned int value;
+    const char * identifier;
 };
 
 const struct hsvm_register hsvm_registers[] = {
@@ -124,7 +119,7 @@ struct hsvm_op hsvm_ops [] = {
 };
 
 
-struct boper * arch_hsvm_register (unsigned int r) {
+struct boper * hsvm_register (unsigned int r) {
     int i;
     for (i = 0; hsvm_registers[i].value != -1; i++) {
         if (hsvm_registers[i].value == r)
@@ -134,11 +129,11 @@ struct boper * arch_hsvm_register (unsigned int r) {
 }
 
 
-struct list * arch_hsvm_translate_arith (const uint8_t * u8buf, size_t size) {
+struct list * hsvm_translate_arith (const uint8_t * u8buf, size_t size) {
     if (size < 4)
         return NULL;
 
-    struct boper * dst = arch_hsvm_register(u8buf[1]);
+    struct boper * dst = hsvm_register(u8buf[1]);
     struct boper * lhs = NULL;
     struct boper * rhs = NULL;
     if (u8buf[0] & 1) {
@@ -146,8 +141,8 @@ struct list * arch_hsvm_translate_arith (const uint8_t * u8buf, size_t size) {
         rhs = boper_constant(16, (u8buf[2] << 8) | u8buf[3]);
     }
     else {
-        lhs = arch_hsvm_register(u8buf[2]);
-        rhs = arch_hsvm_register(u8buf[3]);
+        lhs = hsvm_register(u8buf[2]);
+        rhs = hsvm_register(u8buf[3]);
     }
 
     if ((dst == NULL) || (lhs == NULL) || (rhs == NULL)) {
@@ -181,7 +176,7 @@ struct list * arch_hsvm_translate_arith (const uint8_t * u8buf, size_t size) {
 }
 
 
-struct list * arch_hsvm_store16 (const struct boper * address,
+struct list * hsvm_store16 (const struct boper * address,
                                  const struct boper * value) {
     struct list * list = list_create();
     // store high byte
@@ -205,7 +200,7 @@ struct list * arch_hsvm_store16 (const struct boper * address,
 }
 
 
-struct list * arch_hsvm_load16 (const struct boper * address,
+struct list * hsvm_load16 (const struct boper * address,
                                 const struct boper * dst) {
     struct list * list = list_create();
     // load high byte
@@ -231,7 +226,7 @@ struct list * arch_hsvm_load16 (const struct boper * address,
 }
 
 
-struct list * arch_hsvm_in (const struct boper * dst) {
+struct list * hsvm_in (const struct boper * dst) {
     static unsigned int in_ctr = 0;
 
     char variable_name[32];
@@ -243,7 +238,7 @@ struct list * arch_hsvm_in (const struct boper * dst) {
 }
 
 
-struct list * arch_hsvm_out (const struct boper * src) {
+struct list * hsvm_out (const struct boper * src) {
     static unsigned int out_ctr = 0;
 
     char variable_name[32];
@@ -255,7 +250,7 @@ struct list * arch_hsvm_out (const struct boper * src) {
 }
 
 
-struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
+struct list * hsvm_translate_ins (const void * buf, size_t size) {
     const uint8_t * u8buf = (const uint8_t *) buf;
 
     if (size < 1)
@@ -263,7 +258,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
 
     // handle all arith instructions
     if (u8buf[0] & 0xf0 == 0x10)
-        return arch_hsvm_translate_arith(u8buf, size);
+        return hsvm_translate_arith(u8buf, size);
 
     // get the instruction encoding
     int i;
@@ -284,13 +279,13 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
     struct boper * lval = NULL;
 
     if (encoding == ENCODING_B) {
-        ra = arch_hsvm_register(u8buf[1]);
+        ra = hsvm_register(u8buf[1]);
         if (ra == NULL)
             return NULL;
     }
     else if (encoding == ENCODING_C) {
-        ra = arch_hsvm_register(u8buf[1]);
-        rb = arch_hsvm_register(u8buf[2]);
+        ra = hsvm_register(u8buf[1]);
+        rb = hsvm_register(u8buf[2]);
         if ((ra == NULL) || (rb == NULL)) {
             if (ra) ODEL(ra);
             if (rb) ODEL(rb);
@@ -298,9 +293,9 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         }
     }
     else if (encoding == ENCODING_D) {
-        ra = arch_hsvm_register(u8buf[1]);
-        rb = arch_hsvm_register(u8buf[2]);
-        rc = arch_hsvm_register(u8buf[3]);
+        ra = hsvm_register(u8buf[1]);
+        rb = hsvm_register(u8buf[2]);
+        rc = hsvm_register(u8buf[3]);
         if ((ra == NULL) || (rb == NULL) || (rc == NULL)) {
             if (ra) ODEL(ra);
             if (rb) ODEL(rb);
@@ -309,7 +304,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         }
     }
     else if (encoding == ENCODING_E) {
-        ra = arch_hsvm_register(u8buf[1]);
+        ra = hsvm_register(u8buf[1]);
         lval = boper_constant(16, (u8buf[2] << 8) | u8buf[3]);
         if ((ra == NULL) || (lval == NULL)) {
             if (ra == NULL) ODEL(ra);
@@ -386,7 +381,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
                                boper_constant(16, 2)));
         struct boper * address = boper_variable(16, "rsp");
         struct boper * value = boper_variable(16, "rip");
-        struct list * store_list = arch_hsvm_store16(address, variable);
+        struct list * store_list = hsvm_store16(address, variable);
         list_append_list(list, store_list);
         ODEL(store_list);
         ODEL(value);
@@ -408,7 +403,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
     else if (u8buf[0] == OP_RET) {
         struct boper * address = boper_variable(16, "rsp");
         struct boper * dst = boper_variable(16, "rip");
-        struct list * load_list = arch_hsvm_load16(address, dst);
+        struct list * load_list = hsvm_load16(address, dst);
         list_append_list(list, load_list);
         ODEL(load_list);
         ODEL(dst);
@@ -422,7 +417,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(bins_add_(boper_variable(16, "rip"),
                                boper_variable(16, "rip"),
                                boper_constant(16, 4)));
-        struct list * load_list = arch_hsvm_load16(lval, ra);
+        struct list * load_list = hsvm_load16(lval, ra);
         list_append_list(list, load_list);
         ODEL(load_list);
     }
@@ -431,7 +426,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(bins_add_(boper_variable(16, "rip"),
                                boper_variable(16, "rip"),
                                boper_constant(16, 4)));
-        struct list * load_list = arch_hsvm_load16(rb, ra);
+        struct list * load_list = hsvm_load16(rb, ra);
         list_append_list(list, load_list);
         ODEL(load_list);
     }
@@ -459,7 +454,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(bins_add_(boper_variable(16, "rip"),
                                boper_variable(16, "rip"),
                                boper_constant(16, 4)));
-        struct list * store_list = arch_hsvm_store16(lval, ra);
+        struct list * store_list = hsvm_store16(lval, ra);
         list_append_list(list, store_list);
         ODEL(store_list);
     }
@@ -467,7 +462,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(bins_add_(boper_variable(16, "rip"),
                                boper_variable(16, "rip"),
                                boper_constant(16, 4)));
-        struct list * store_list = arch_hsvm_store16(rb, ra);
+        struct list * store_list = hsvm_store16(rb, ra);
         list_append_list(list, store_list);
         ODEL(store_list);
     }
@@ -493,7 +488,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(bins_add_(boper_variable(16, "rip"),
                                boper_variable(16, "rip"),
                                boper_constant(16, 4)));
-        struct list * in_list = arch_hsvm_in(ra);
+        struct list * in_list = hsvm_in(ra);
         list_append_list(list, in_list);
         ODEL(in_list);
     }
@@ -501,7 +496,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(bins_add_(boper_variable(16, "rip"),
                                boper_variable(16, "rip"),
                                boper_constant(16, 4)));
-        struct list * out_list = arch_hsvm_out(ra);
+        struct list * out_list = hsvm_out(ra);
         list_append_list(list, out_list);
         ODEL(out_list);
     }
@@ -513,7 +508,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
                                boper_variable(16, "rsp"),
                                boper_constant(16, 2)));
         struct boper * rsp = boper_variable(16, "rsp");
-        struct list * store_list = arch_hsvm_store16(rsp, ra);
+        struct list * store_list = hsvm_store16(rsp, ra);
         list_append_list(list, store_list);
         ODEL(store_list);
         ODEL(rsp);
@@ -526,7 +521,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
                                boper_variable(16, "rsp"),
                                boper_constant(16, 2)));
         struct boper * rsp = boper_variable(16, "rsp");
-        struct list * store_list = arch_hsvm_store16(rsp, lval);
+        struct list * store_list = hsvm_store16(rsp, lval);
         list_append_list(list, store_list);
         ODEL(store_list);
         ODEL(rsp);
@@ -536,7 +531,7 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
                                boper_variable(16, "rip"),
                                boper_constant(16, 4)));
         struct boper * rsp = boper_variable(16, "rsp");
-        struct list * load_list = arch_hsvm_load16(rsp, ra);
+        struct list * load_list = hsvm_load16(rsp, ra);
         list_append_list(list, load_list);
         ODEL(load_list);
         ODEL(rsp);
@@ -591,6 +586,44 @@ struct list * arch_hsvm_translate_ins (const void * buf, size_t size) {
     if (rb) ODEL(rb);
     if (rc) ODEL(rc);
     if (lval) ODEL(lval);
+
+    return list;
+}
+
+
+struct list * hsvm_translate_block (const void * buf, size_t size) {
+    const uint8_t * u8buf = (const uint8_t *) buf;
+
+    struct list * list = list_create();
+    size_t offset;
+    for (offset = 0; offset + 4 <= size; offset += 4) {
+        struct list * ins_list = hsvm_translate_ins(&(u8buf[offset]), 4);
+        if (ins_list == NULL) {
+            ODEL(list);
+            return NULL;
+        }
+        list_append_list(list, ins_list);
+        ODEL(ins_list);
+
+        int break_loop = 0;
+        switch (u8buf[offset]) {
+        case OP_JMP :
+        case OP_JE :
+        case OP_JNE :
+        case OP_JL :
+        case OP_JLE :
+        case OP_JGE :
+        case OP_CALL :
+        case OP_CALLR :
+        case OP_RET :
+        case OP_HLT :
+        case OP_SYSCALL :
+            break_loop = 1;
+            break;
+        }
+        if (break_loop)
+            break;
+    }
 
     return list;
 }
