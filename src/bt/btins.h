@@ -54,7 +54,7 @@ struct bins {
     union {
         struct boper * oper[3];
         struct list * (* call) (void * data);
-    }
+    };
 };
 
 
@@ -83,12 +83,12 @@ struct bins * bins_copy   (const struct bins * bins);
 char * bins_string (const struct bins * bins);
 
 #define BINS_3OP_DECL(XXX) \
-struct bins * bins_#XXX (const struct boper * oper0, \
-                         const struct boper * oper1, \
-                         const struct boper * oper2); \
-struct bins * bins_#XXX#_ (struct boper * oper0, \
-                           struct boper * oper1, \
-                           struct boper * oper2);
+struct bins * bins_ ## XXX (const struct boper * oper0, \
+                            const struct boper * oper1, \
+                            const struct boper * oper2); \
+struct bins * bins_ ## XXX ## _ (struct boper * oper0, \
+                                 struct boper * oper1, \
+                                 struct boper * oper2);
 BINS_3OP_DECL(add)
 BINS_3OP_DECL(sub)
 BINS_3OP_DECL(umul)
@@ -106,14 +106,16 @@ BINS_3OP_DECL(cmpleu)
 BINS_3OP_DECL(cmples)
 
 #define BINS_2OP_DECL(XXX) \
-struct bins * bins_#XXX (const struct boper * oper0, \
-                         const struct boper * oper1); \
-struct bins * bins_#XXX#_ (struct boper * oper0, \
+struct bins * bins_ ## XXX (const struct boper * oper0, \
+                          const struct boper * oper1); \
+struct bins * bins_ ## XXX ## _ (struct boper * oper0, \
                            struct boper * oper1);
+
 BINS_2OP_DECL(sext)
-BINS_3OP_DECL(zext)
-BINS_3OP_DECL(load)
-BINS_3OP_DECL(store)
+BINS_2OP_DECL(zext)
+BINS_2OP_DECL(trun)
+BINS_2OP_DECL(load)
+BINS_2OP_DECL(store)
 
 struct bins * bins_hlt  ();
 struct bins * bins_call (void (* bcall) (void * data));

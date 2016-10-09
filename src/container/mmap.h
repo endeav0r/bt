@@ -39,6 +39,18 @@ struct mmap * mmap_create  (unsigned int page_size);
 void          mmap_destroy (struct mmap * mmap);
 struct mmap * mmap_copy    (const struct mmap * mmap);
 
+/**
+* Inserts the buf into the mmap at the given address with given permissions. If
+* the pages do not exist they will be created. If buf_size is less than size,
+* the pages will be created but will not be initialized.
+* @param mmap the mmap struct
+* @param address the address in mmap where we should begin creating memory
+* @param size the size of memory to create in the mmap
+* @param buf the memory to copy over. This can be NULL if buf_size == 0
+* @param buf_size the size of buf. This must be less than size.
+* @param permissions the mask of permissions to set this memory.
+* @return 0 on success, non-zero on failure
+*/
 int mmap_map (struct mmap * mmap,
               uint64_t address,
               size_t size,

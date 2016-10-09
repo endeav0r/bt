@@ -8,4 +8,4 @@ all : $(OBJS)
 	$(CC) -c -o $@ $< $(INCLUDE) $(CFLAGS)
 
 clean :
-	make -f *.o
+	rm -f *.o

@@ -1,4 +1,4 @@
-OBJS=buf.o byte_buf.o list.o mmap.o tree.o
+OBJS=
 
 CFLAGS=-Wall -O2 -g
 

@@ -205,24 +205,26 @@ struct bins * bins_copy (const struct bins * bins) {
 
 
 #define BINS_3OP_DEF(XXX, YYY) \
-struct bins * bins_#XXX (const struct boper * oper0, \
-                         const struct boper * oper1, \
-                         const struct boper * oper2) { \
-    return bins_create(BOP_#YYY, oper0, oper1, oper2); \
+struct bins * bins_##XXX (const struct boper * oper0, \
+                          const struct boper * oper1, \
+                          const struct boper * oper2) { \
+    return bins_create(BOP_##YYY, oper0, oper1, oper2); \
 } \
-struct bins * bins_#XXX#_ (struct boper * oper0, \
+struct bins * bins_##XXX_ (struct boper * oper0, \
                            struct boper * oper1, \
                            struct boper * oper2) { \
-    return bins_create_(BOP_#YYY, oper0, oper1, oper2); \
+    return bins_create_(BOP_##YYY, oper0, oper1, oper2); \
 }
+
+BINS_3OP_DEF(add, ADD)
 
 
 #define BINS_2OP_DEF(XXX, YYY) \
-struct bins * bins_#XXX (const struct boper * oper0, \
+struct bins * bins_##XXX (const struct boper * oper0, \
                          const struct boper * oper1) { \
     return bins_create(BOP_#YYY, oper0, oper1, NULL); \
 } \
-struct bins * bins_#XXX#_ (struct boper * oper0, \
+struct bins * bins_##XXX_ (struct boper * oper0, \
                            struct boper * oper1) { \
     return bins_create_(BOP_#YYY, oper0, oper1, NULL); \
 }

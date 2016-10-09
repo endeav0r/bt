@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-struct list_it * {
+struct list_it {
     void * obj;
     struct list_it * next;
     struct list_it * prev;
