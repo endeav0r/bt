@@ -21,3 +21,4 @@ clean :
 	make -C container clean
 	make -C loader clean
 	make -C test clean
+	rm -f jit_example
