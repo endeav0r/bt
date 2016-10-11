@@ -30,10 +30,9 @@ struct tree_node * tree_node_create (void * obj);
 struct tree_node * tree_node_insert  (struct tree_node * node,
                                       struct tree_node * new_node,
                                       int * error);
-void * tree_node_fetch (struct tree_node * node,
-                        const struct tree_node * needle);
+void * tree_node_fetch (struct tree_node * node, const void * needle);
 struct tree_node * tree_node_delete  (struct tree_node * node,
-                                      const struct tree_node * needle,
+                                      const void * needle,
                                       int * error);
 
 struct tree_node * tree_node_skew  (struct tree_node * node);

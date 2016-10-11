@@ -1,6 +1,8 @@
 OBJS=object.o
 
 CFLAGS=-Wall -O2 -g
+LIB=arch/target/*.o bt/*.o container/*.o object.o
+INCLUDE=-I./
 
 all : $(OBJS)
 	make -C arch
@@ -8,6 +10,7 @@ all : $(OBJS)
 	make -C container
 	make -C loader
 	make -C test
+	$(CC) -o jit_example jit_example.c $(INCLUDE) $(LIB) $(CFLAGS)
 
 %.o : %.c
 	$(CC) -c -o $@ $< $(INCLUDE) $(CFLAGS)

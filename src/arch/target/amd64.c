@@ -542,9 +542,9 @@ int mov_r_r (struct byte_buf * bb,
 
 
 int mov_r_rm (struct byte_buf * bb,
+              unsigned int r,
               unsigned int rm,
               uint32_t off32,
-              unsigned int r,
               unsigned int bits) {
     return op_rm_r(bb, OP_MOV_RM_R_R_RM, rm, off32, r, bits);
 }

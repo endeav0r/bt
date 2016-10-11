@@ -132,7 +132,7 @@ unsigned int boper_bits (const struct boper * boper) {
 uint64_t boper_value (const struct boper * boper) {
     if (boper->bits == 64)
         return boper->value;
-    return boper->value & ((1 << boper->bits) - 1);
+    return boper->value & (((uint64_t) 1 << (uint64_t) boper->bits) - 1);
 }
 
 const struct object bins_object = {
@@ -262,13 +262,27 @@ struct bins * bins_##XXX (const struct boper * oper0, \
                           const struct boper * oper2) { \
     return bins_create(BOP_##YYY, oper0, oper1, oper2); \
 } \
-struct bins * bins_##XXX_ (struct boper * oper0, \
+struct bins * bins_##XXX##_ (struct boper * oper0, \
                            struct boper * oper1, \
                            struct boper * oper2) { \
     return bins_create_(BOP_##YYY, oper0, oper1, oper2); \
 }
 
 BINS_3OP_DEF(add, ADD)
+BINS_3OP_DEF(sub, SUB)
+BINS_3OP_DEF(umul, UMUL)
+BINS_3OP_DEF(udiv, UDIV)
+BINS_3OP_DEF(umod, UMOD)
+BINS_3OP_DEF(and, AND)
+BINS_3OP_DEF(or, OR)
+BINS_3OP_DEF(xor, XOR)
+BINS_3OP_DEF(shl, SHL)
+BINS_3OP_DEF(shr, SHR)
+BINS_3OP_DEF(cmpeq, CMPEQ)
+BINS_3OP_DEF(cmpltu, CMPLTU)
+BINS_3OP_DEF(cmplts, CMPLTS)
+BINS_3OP_DEF(cmpleu, CMPLEU)
+BINS_3OP_DEF(cmples, CMPLES)
 
 
 #define BINS_2OP_DEF(XXX, YYY) \

@@ -1,5 +1,6 @@
 #include "tree.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 const struct object tree_object = {
@@ -63,7 +64,7 @@ int tree_insert (struct tree * tree, const void * obj) {
 
 int tree_insert_ (struct tree * tree, void * obj) {
     int error = 0;
-    tree->nodes = tree_node_insert(tree->nodes, obj, &error);
+    tree->nodes = tree_node_insert(tree->nodes, tree_node_create(obj), &error);
     return error;
 }
 
@@ -113,13 +114,12 @@ struct tree_node * tree_node_insert (struct tree_node * node,
 }
 
 
-void * tree_node_fetch (struct tree_node * node,
-                        const struct tree_node * needle) {
+void * tree_node_fetch (struct tree_node * node, const void * needle) {
     if (node == NULL)
         return NULL;
-    else if (OCMP(needle->obj, node->obj) < 0)
+    else if (OCMP(needle, node->obj) < 0)
         return tree_node_fetch(node->left, needle);
-    else if (OCMP(needle->obj, node->obj) > 0)
+    else if (OCMP(needle, node->obj) > 0)
         return tree_node_fetch(node->right, needle);
     else
         return node->obj;
@@ -168,16 +168,18 @@ struct tree_node * tree_node_decrease_level (struct tree_node * node) {
 
 
 struct tree_node * tree_node_delete (struct tree_node * node,
-                                     const struct tree_node * needle,
+                                     const void * needle,
                                      int * error) {
     if (node == NULL) {
         *error = -1;
         return NULL;
     }
-    else if (OCMP(needle->obj, node->obj) < 0)
+    else if (OCMP(needle, node->obj) < 0) {
         node->left = tree_node_delete(node->left, needle, error);
-    else if (OCMP(needle->obj, node->obj) > 0)
+    }
+    else if (OCMP(needle, node->obj) > 0) {
         node->right = tree_node_delete(node->right, needle, error);
+    }
     else {
         if ((node->left == NULL) && (node->right == NULL)) {
             ODEL(node->obj);
@@ -188,13 +190,13 @@ struct tree_node * tree_node_delete (struct tree_node * node,
             struct tree_node * tmp = tree_node_successor(node);
             ODEL(node->obj);
             node->obj = OCOPY(tmp->obj);
-            node->right = tree_node_delete(node->right, tmp, error);
+            node->right = tree_node_delete(node->right, tmp->obj, error);
         }
         else if (node->right == NULL) {
             struct tree_node * tmp = tree_node_predecessor(node);
             ODEL(node->obj);
             node->obj = OCOPY(tmp->obj);
-            node->left = tree_node_delete(node->left, tmp, error);
+            node->left = tree_node_delete(node->left, tmp->obj, error);
         }
     }
 
@@ -203,7 +205,7 @@ struct tree_node * tree_node_delete (struct tree_node * node,
     node->right = tree_node_skew(node->right);
 
     if (node->right != NULL)
-        node->right = tree_node_skew(node->right->right);
+        node->right->right = tree_node_skew(node->right->right);
 
     node = tree_node_split(node);
     node->right = tree_node_split(node->right);
