@@ -7,6 +7,7 @@ all : $(OBJS)
 	make -C bt
 	make -C container
 	make -C loader
+	make -C test
 
 %.o : %.c
 	$(CC) -c -o $@ $< $(INCLUDE) $(CFLAGS)
@@ -16,3 +17,4 @@ clean :
 	make -C bt clean
 	make -C container clean
 	make -C loader clean
+	make -C test clean

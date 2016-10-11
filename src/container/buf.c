@@ -46,7 +46,7 @@ struct buf * buf_slice (const struct buf * buf, size_t offset, size_t size) {
 
 
 const void * buf_get (const struct buf * buf, size_t offset, size_t size) {
-    if (offset + size >= buf->length) {
+    if (offset + size > buf->length) {
         return NULL;
     }
     return &(buf->buf[offset]);
@@ -57,7 +57,7 @@ int buf_set (const struct buf * buf,
              size_t offset,
              size_t length,
              const void * data) {
-    if (offset + length >= buf->length)
+    if (offset + length > buf->length)
         return -1;
     memcpy(&(buf->buf[offset]), data, length);
     return 0;

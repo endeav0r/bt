@@ -37,6 +37,25 @@ void tree_delete (struct tree * tree) {
 }
 
 
+void tree_copy_node (struct tree * tree, const struct tree_node * node) {
+    if (node == NULL)
+        return;
+    tree_insert(tree, node->obj);
+    if (node->left != NULL)
+        tree_copy_node(tree, node->left);
+    if (node->right != NULL)
+        tree_copy_node(tree, node->right);
+
+}
+
+
+struct tree * tree_copy (const struct tree * tree) {
+    struct tree * copy = tree_create();
+    tree_copy_node(copy, tree->nodes);
+    return copy;
+}
+
+
 int tree_insert (struct tree * tree, const void * obj) {
     return tree_insert_(tree, OCOPY(obj));
 }

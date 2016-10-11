@@ -41,7 +41,7 @@ struct list * list_copy (const struct list * list) {
 
     struct list_it * it;
     for (it = list->front; it != NULL; it = it->next) {
-        list_append(copy, it);
+        list_append(copy, it->obj);
     }
 
     return copy;
@@ -91,7 +91,7 @@ void list_prepend_ (struct list * list, void * obj) {
     it->prev = NULL;
     it->next = list->front;
     list->front->prev = it;
-    list->front = it->next;
+    list->front = it;
 }
 
 
