@@ -2,8 +2,10 @@
 #define jit_HEADER
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "container/tree.h"
+#include "object.h"
 
 #define INITIAL_MMAP_SIZE (1024 * 1024 * 32)
 #define INITIAL_VAR_MEM_SIZE (8 * 128)
@@ -16,14 +18,6 @@ struct jit_block {
 };
 
 
-struct jit_var {
-    const struct object * object;
-    const char * identifier;
-    size_t offset;
-    size_t size;
-}
-
-
 struct jit {
     const struct object * object;
     /* A tree of jit_block structs we use to find jit code for blocks by
@@ -33,16 +27,6 @@ struct jit {
     uint8_t * mmap_mem;
     /* size of mmap_mem */
     size_t mmap_size;
-    /* A tree of jit_var structs we use to track variables and their offset into
-       the var_mem buffer */
-    struct tree * variables;
-    /* r/w memory used to store jit variables */
-    uint8_t * var_mem;
-    /* The size of allocated bytes for var_mem */
-    size_t var_mem_size;
-    /* The number of bytes used by var_mem. I.E. this is the index to the next
-       byte in the var_mem buffer we can use to allocate a new variable */
-    size_t var_mem_top;
 };
 
 

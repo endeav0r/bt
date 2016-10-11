@@ -1,6 +1,7 @@
-OBJS=buf.o byte_buf.o list.o mmap.o tree.o
+OBJS=buf.o byte_buf.o list.o memmap.o tree.o varstore.o
 
 CFLAGS=-Wall -O2 -g
+INCLUDE=-I../
 
 all : $(OBJS)
 

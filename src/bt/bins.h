@@ -1,5 +1,5 @@
-#ifndef btil_HEADER
-#define btil_HEADER
+#ifndef bins_HEADER
+#define bins_HEADER
 
 #include "container/list.h"
 #include "object.h"
@@ -53,7 +53,6 @@ struct bins {
     int op;
     union {
         struct boper * oper[3];
-        struct list * (* call) (void * data);
     };
 };
 
@@ -66,8 +65,14 @@ struct boper * boper_variable (unsigned int bits, const char * identifier);
 struct boper * boper_constant (unsigned int bits, uint64_t value);
 void           boper_delete   (struct boper * boper);
 struct boper * boper_copy     (const struct boper * boper);
+int            boper_cmp      (const struct boper * lhs,
+                               const struct boper * rhs);
 
 char * boper_string (const struct boper * boper);
+unsigned int boper_type       (const struct boper * boper);
+const char * boper_identifier (const struct boper * boper);
+unsigned int boper_bits       (const struct boper * boper);
+uint64_t     boper_value      (const struct boper * boper);
 
 struct bins *  bins_create (int op,
                             const struct boper * oper0,
@@ -118,6 +123,5 @@ BINS_2OP_DECL(load)
 BINS_2OP_DECL(store)
 
 struct bins * bins_hlt  ();
-struct bins * bins_call (void (* bcall) (void * data));
 
 #endif

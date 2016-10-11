@@ -1,6 +1,7 @@
-#include "buf.h"
+#include "byte_buf.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 const struct object buf_object = {
     (void (*) (void *)) byte_buf_delete,
@@ -10,7 +11,7 @@ const struct object buf_object = {
 
 
 struct byte_buf * byte_buf_create () {
-    struct byte_buf * byte_buf = malloc(sizefo(struct byte_buf));
+    struct byte_buf * byte_buf = malloc(sizeof(struct byte_buf));
     byte_buf->buf = malloc(16);
     byte_buf->length = 0;
     byte_buf->allocated_size = 16;
@@ -28,7 +29,7 @@ struct byte_buf * byte_buf_copy (const struct byte_buf * byte_buf) {
     struct byte_buf * new = malloc(sizeof(struct byte_buf));
     new->buf = malloc(byte_buf->allocated_size);
     memcpy(new->buf, byte_buf->buf, byte_buf->length);
-    new_>length = byte_buf->length;
+    new->length = byte_buf->length;
     return new;
 }
 
@@ -57,8 +58,8 @@ int byte_buf_append_le16 (struct byte_buf * byte_buf, uint16_t uint16) {
         byte_buf->allocated_size += 32;
     }
 
-    byte_buf->buf[length++] = uint16 & 0xff;
-    byte_buf->buf[length++] = (uint16 >> 8) & 0xff;
+    byte_buf->buf[byte_buf->length++] = uint16 & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint16 >> 8) & 0xff;
 
     return 0;
 }
@@ -73,16 +74,16 @@ int byte_buf_append_le32 (struct byte_buf * byte_buf, uint32_t uint32) {
         byte_buf->allocated_size += 32;
     }
 
-    byte_buf->buf[length++] = uint32 & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 8) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 16) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 24) & 0xff;
+    byte_buf->buf[byte_buf->length++] = uint32 & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint32 >> 8) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint32 >> 16) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint32 >> 24) & 0xff;
 
     return 0;
 }
 
 
-int byte_buf_append_le32 (struct byte_buf * byte_buf, uint32_t uint32) {
+int byte_buf_append_le64 (struct byte_buf * byte_buf, uint64_t uint64) {
     if (byte_buf->length >= byte_buf->allocated_size - 8) {
         uint8_t * tmp = realloc(byte_buf->buf, byte_buf->allocated_size + 32);
         if (tmp == NULL)
@@ -91,14 +92,14 @@ int byte_buf_append_le32 (struct byte_buf * byte_buf, uint32_t uint32) {
         byte_buf->allocated_size += 32;
     }
 
-    byte_buf->buf[length++] = uint32 & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 8) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 16) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 24) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 32) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 40) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 48) & 0xff;
-    byte_buf->buf[length++] = (uint32 >> 56) & 0xff;
+    byte_buf->buf[byte_buf->length++] = uint64 & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint64 >> 8) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint64 >> 16) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint64 >> 24) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint64 >> 32) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint64 >> 40) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint64 >> 48) & 0xff;
+    byte_buf->buf[byte_buf->length++] = (uint64 >> 56) & 0xff;
 
     return 0;
 }

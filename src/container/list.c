@@ -27,7 +27,7 @@ void list_delete (struct list * list) {
 
     while (it != NULL) {
         next = it->next;
-        ODEL(it->obj):
+        ODEL(it->obj);
         free(it);
         it = next;
     }
@@ -40,7 +40,7 @@ struct list * list_copy (const struct list * list) {
     struct list * copy = list_create();
 
     struct list_it * it;
-    for (it = list->first; it != NULL; it = it->next) {
+    for (it = list->front; it != NULL; it = it->next) {
         list_append(copy, it);
     }
 
@@ -103,7 +103,7 @@ void * list_front (struct list * list) {
 
 
 void * list_back (struct list * list) {
-    it (list->back == NULL)
+    if (list->back == NULL)
         return NULL;
     return list->back->obj;
 }

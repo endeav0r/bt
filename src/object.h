@@ -1,7 +1,7 @@
 #ifndef object_HEADER
 #define object_HEADER
 
-struct object_header {
+struct object {
     void (* delete) (void *);
     void * (* copy) (const void *);
     int (* cmp) (const void *, const void *);

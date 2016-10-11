@@ -1,11 +1,11 @@
-#include "btins.h"
+#include "bins.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 struct bins_string {
-    int op,
+    int op;
     const char * string;
 };
 
@@ -35,7 +35,7 @@ const struct bins_string bins_strings [] = {
 const struct object boper_object = {
     (void (*) (void *)) boper_delete,
     (void * (*) (const void *)) boper_copy,
-    NULL
+    (int (*) (const void *, const void *)) boper_cmp
 };
 
 
@@ -45,11 +45,11 @@ struct boper * boper_create (unsigned int type,
                              uint64_t value) {
     struct boper * boper = malloc(sizeof(struct boper));
 
-    bops->object = &boper_object;
+    boper->object = &boper_object;
     boper->type = type;
     boper->bits = bits;
     if (identifier != NULL)
-        boper->identifier = strdup(identifier)
+        boper->identifier = strdup(identifier);
     else
         boper->identifier = NULL;
     boper->value = value;
@@ -70,7 +70,7 @@ struct boper * boper_constant (unsigned int bits, uint64_t value) {
 
 void boper_delete (struct boper * boper) {
     if (boper->identifier != NULL)
-        free(boper->identifier);
+        free((void *) boper->identifier);
     free(boper);
 }
 
@@ -83,24 +83,61 @@ struct boper * boper_copy (const struct boper * boper) {
 }
 
 
+int boper_cmp (const struct boper * lhs, const struct boper * rhs) {
+    if (lhs->type < rhs->type)
+        return -1;
+    else if (lhs->type > rhs->type)
+        return 1;
+    else if (lhs->bits < rhs->bits)
+        return -1;
+    else if (lhs->bits > rhs->bits)
+        return 1;
+    else if (lhs->type == BOPER_CONSTANT) {
+        if (boper_value(lhs) < boper_value(rhs))
+            return -1;
+        else if (boper_value(lhs) > boper_value(rhs))
+            return 1;
+        return 0;
+    }
+    return strcmp(lhs->identifier, rhs->identifier);
+}
+
+
 char * boper_string (const struct boper * boper) {
     char * s = NULL;
     if (boper->type == BOPER_VARIABLE) {
-        size_t size = strlen(boper->identifier, 32);
-        s = malloc(size);
+        size_t size = strlen(boper->identifier);
+        s = malloc(size + 32);
         snprintf(s, size, "%s:%u", boper->identifier, boper->bits);
     }
     else if (boper->type == BOPER_CONSTANT) {
         s = malloc(64);
-        snprintf(s, 64, "0x%llx:%u", boper->value, boper->bits);
+        snprintf(s, 64, "0x%llx:%u", boper_value(boper), boper->bits);
     }
     return s;
 }
 
+unsigned int boper_type (const struct boper * boper) {
+    return boper->type;
+}
+
+const char * boper_identifier (const struct boper * boper) {
+    return boper->identifier;
+}
+
+unsigned int boper_bits (const struct boper * boper) {
+    return boper->bits;
+}
+
+uint64_t boper_value (const struct boper * boper) {
+    if (boper->bits == 64)
+        return boper->value;
+    return boper->value & ((1 << boper->bits) - 1);
+}
 
 const struct object bins_object = {
     (void (*) (void *)) bins_delete,
-    (void * (*) (const void *)),
+    (void * (*) (const void *)) bins_copy,
     NULL
 };
 
@@ -109,14 +146,29 @@ struct bins * bins_create (int op,
                            const struct boper * oper0,
                            const struct boper * oper1,
                            const struct boper * oper2) {
-    return bins_create(op, OCOPY(oper0), OCOPY(oper1), OCOPY(oper2));
+    struct bins * bins = malloc(sizeof(struct bins));
+    bins->object = &bins_object;
+    bins->op = op;
+    if (oper0)
+        bins->oper[0] = OCOPY(oper0);
+    else
+        bins->oper[0] = NULL;
+    if (oper1)
+        bins->oper[1] = OCOPY(oper1);
+    else
+        bins->oper[1] = NULL;
+    if (oper2)
+        bins->oper[2] = OCOPY(oper2);
+    else
+        bins->oper[2] = NULL;
+    return bins;
 }
 
 
-struct bins * bins_create (int op,
-                           struct boper * oper0,
-                           struct boper * oper1,
-                           struct boper * oper2) {
+struct bins * bins_create_ (int op,
+                            struct boper * oper0,
+                            struct boper * oper1,
+                            struct boper * oper2) {
     struct bins * bins = malloc(sizeof(struct bins));
     bins->op = op;
 
@@ -232,10 +284,4 @@ struct bins * bins_##XXX_ (struct boper * oper0, \
 
 struct bins * bins_hlt () {
     return bins_create(BOP_HLT, NULL, NULL, NULL);
-}
-
-
-struct bins * bins_call (struct list * (* bcall) (void * data)) {
-    struct bins * bins = bins_create(BOP_CALL, NULL, NULL, NULL);
-    bins->call = bcall;
 }

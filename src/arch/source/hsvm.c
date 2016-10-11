@@ -1,6 +1,6 @@
 #include "arch/source/hsvm.h"
 
-#include "bt/btins.h"
+#include "bt/bins.h"
 
 #include <stdio.h>
 

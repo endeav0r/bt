@@ -1,6 +1,7 @@
-OBJS=btins.o jit.o
+OBJS=bins.o jit.o
 
 CFLAGS=-Wall -O2 -g
+INCLUDE=-I../
 
 all : $(OBJS)
 

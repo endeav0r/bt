@@ -1,6 +1,7 @@
 #include "buf.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 const struct object buf_object = {
     (void (*) (void *)) buf_delete,

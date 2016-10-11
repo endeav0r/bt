@@ -2,8 +2,19 @@
 #define amd64_HEADER
 
 #include <stdint.h>
-#include "container/byte_buf.h"
 
+#include "bt/bins.h"
+#include "container/byte_buf.h"
+#include "container/list.h"
+#include "container/varstore.h"
+
+/*
+Return codes:
+0 - Execution Successful
+1 - Error reading from MMU
+2 - Error writing to MMO
+3 - Encountered HLT instruction
+*/
 
 
 struct byte_buf * amd64_assemble (struct list * btins_list,
@@ -22,8 +33,7 @@ int amd64_store_boper_r (struct byte_buf * bb,
 int amd64_store_boper_imm (struct byte_buf * bb,
                            struct varstore * varstore,
                            struct boper * boper,
-                           uint64_t imm,
-                           unsigned int bits);
+                           uint64_t imm);
 
 int add_r_imm (struct byte_buf * bb,
                unsigned int dst,

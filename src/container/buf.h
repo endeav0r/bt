@@ -4,6 +4,7 @@
 #include "object.h"
 
 #include <stdint.h>
+#include <stdlib.h>
 
 struct buf {
     const struct object * object;
