@@ -1,11 +1,39 @@
 #ifndef amd64_HEADER
 #define amd64_HEADER
 
+#include <stdint.h>
+#include "container/byte_buf.h"
 
-int store_var_reg (struct byte_buf * byte_buf,
-                   uint32_t offset,
-                   uint8_t reg,
-                   uint8_t reg_bits);
+
+
+struct byte_buf * amd64_assemble (struct list * btins_list,
+                                  struct varstore * varstore);
+
+int amd64_load_r_boper (struct byte_buf * bb,
+                        struct varstore * varstore,
+                        unsigned int reg,
+                        struct boper * boper);
+
+int amd64_store_boper_r (struct byte_buf * bb,
+                         struct varstore * varstore,
+                         struct boper * boper,
+                         unsigned int reg);
+
+int amd64_store_boper_imm (struct byte_buf * bb,
+                           struct varstore * varstore,
+                           struct boper * boper,
+                           uint64_t imm,
+                           unsigned int bits);
+
+int add_r_imm (struct byte_buf * bb,
+               unsigned int dst,
+               uint64_t imm,
+               unsigned int bits);
+
+int add_r_r (struct byte_buf * bb,
+             unsigned int dst,
+             unsigned int rhs,
+             unsigned int bits);
 
 int add_rm_r (struct byte_buf * bb,
               unsigned int rm,
@@ -13,14 +41,29 @@ int add_rm_r (struct byte_buf * bb,
               unsigned int r,
               unsigned int bits);
 
+int and_r_imm (struct byte_buf * bb,
+               unsigned int dst,
+               uint64_t imm,
+               unsigned int bits);
+
+int and_r_r (struct byte_buf * bb,
+             unsigned int dst,
+             unsigned int rhs,
+             unsigned int bits);
+
+int and_rm_imm (struct byte_buf * bb,
+                unsigned int rm,
+                uint32_t off32,
+                uint64_t imm,
+                unsigned int bits);
+
 int and_rm_r (struct byte_buf * bb,
               unsigned int rm,
               uint32_t off32,
               unsigned int r,
               unsigned int bits);
 
-int and_r8_imm8 (struct byte_buf * bb, unsigned int r8, uint8_t imm8);
-int and_r16_imm16 (struct byte_buf * bb, unsigned int r16, uint16_t imm16);
+int call_r (struct byte_buf * bb, unsigned int r);
 
 int cmp_r_imm (struct byte_buf * bb,
                unsigned int r,
@@ -56,6 +99,12 @@ int mov_r_rm (struct byte_buf * bb,
               uint32_t off32,
               unsigned int bits);
 
+int mov_rm_imm (struct byte_buf * bb,
+                unsigned int rm,
+                uint32_t off32,
+                uint64_t imm,
+                unsigned int bits);
+
 int mov_rm_r (struct byte_buf * bb,
               unsigned int rm,
               uint32_t off32,
@@ -88,9 +137,21 @@ int pop_r64 (struct byte_buf * bb, unsigned int reg);
 
 int push_r64 (struct byte_buf * bb, unsigned int reg);
 
+int ret (struct byte_buf * bb);
+
 int shl_r64_r64 (struct byte_buf * bb, unsigned int lhs, unsigned int rhs);
 
 int shr_r64_r64 (struct byte_buf * bb, unsigned int lhs, unsigned int rhs);
+
+int sub_r_imm (struct byte_buf * bb,
+               unsigned int dst,
+               uint64_t imm,
+               unsigned int bits);
+
+int sub_r_r (struct byte_buf * bb,
+             unsigned int dst,
+             unsigned int rhs,
+             unsigned int bits);
 
 int sub_rm_r (struct byte_buf * bb,
               unsigned int rm,
