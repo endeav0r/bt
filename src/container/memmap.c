@@ -1,5 +1,6 @@
 #include "memmap.h"
 
+#include <stdio.h>
 #include <string.h>
 
 const struct object memmap_page_object = {
@@ -105,7 +106,7 @@ int memmap_map (struct memmap * memmap,
     // first page doesn't exist, create it
     if (page == NULL) {
         page = memmap_page_create(page_address, memmap->page_size, permissions);
-        tree_insert(memmap->tree, page);
+        tree_insert_(memmap->tree, page);
     }
     // set permissions
     page->permissions = permissions;
@@ -134,7 +135,7 @@ int memmap_map (struct memmap * memmap,
         page = tree_fetch(memmap->tree, needle);
         if (page == NULL) {
             page = memmap_page_create(page_address, memmap->page_size, permissions);
-            tree_insert(memmap->tree, page);
+            tree_insert_(memmap->tree, page);
         }
         page->permissions = permissions;
 
@@ -155,13 +156,14 @@ int memmap_map (struct memmap * memmap,
 
 
 uint8_t memmap_byte_get (const struct memmap * memmap,
-                       uint64_t address,
-                       int * error) {
+                         uint64_t address,
+                         int * error) {
     struct memmap_page page;
 
     uint64_t page_address = address & (~(memmap->page_size - 1));
     uint64_t page_offset  = address - page_address;
 
+    page.object = &memmap_page_object;
     page.address = page_address;
 
     struct memmap_page * tree_page = tree_fetch(memmap->tree, &page);
@@ -180,6 +182,7 @@ int memmap_byte_set (struct memmap * memmap, uint64_t address, uint8_t byte) {
     uint64_t page_address = address & (~(memmap->page_size - 1));
     uint64_t page_offset  = address - page_address;
 
+    page.object = &memmap_page_object;
     page.address = page_address;
 
     struct memmap_page * tree_page = tree_fetch(memmap->tree, &page);
@@ -189,6 +192,28 @@ int memmap_byte_set (struct memmap * memmap, uint64_t address, uint8_t byte) {
 
     tree_page->data[page_offset] = byte;
     return 0;
+}
+
+
+struct buf * memmap_get_buf (const struct memmap * memmap,
+                             uint64_t address,
+                             size_t size) {
+    struct buf * buf = buf_create(size);
+    int error = 0;
+    size_t offset;
+    for (offset = 0; offset < size; offset++) {
+        uint8_t byte = memmap_byte_get(memmap, address + offset, &error);
+        if (error) {
+            break;
+        }
+        buf_set(buf, offset, 1, &byte);
+    }
+    if (offset != size) {
+        struct buf * slice = buf_slice(buf, 0, offset);
+        ODEL(buf);
+        return slice;
+    }
+    return buf;
 }
 
 

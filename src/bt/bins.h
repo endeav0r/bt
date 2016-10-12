@@ -68,6 +68,7 @@ struct boper * boper_copy     (const struct boper * boper);
 int            boper_cmp      (const struct boper * lhs,
                                const struct boper * rhs);
 
+// caller must free string
 char * boper_string (const struct boper * boper);
 unsigned int boper_type       (const struct boper * boper);
 const char * boper_identifier (const struct boper * boper);

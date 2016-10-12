@@ -1,15 +1,16 @@
 #ifndef memmap_HEADER
 #define memmap_HEADER
 
+#include "container/buf.h"
 #include "container/tree.h"
 #include "object.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 
-#define memmap_R 1
-#define memmap_W 2
-#define memmap_X 4
+#define MEMMAP_R 1
+#define MEMMAP_W 2
+#define MEMMAP_X 4
 
 struct memmap_page {
     const struct object * object;
@@ -53,12 +54,17 @@ struct memmap * memmap_copy   (const struct memmap * memmap);
 * @return 0 on success, non-zero on failure
 */
 int memmap_map (struct memmap * memmap,
-              uint64_t address,
-              size_t size,
-              const uint8_t * buf,
-              size_t buf_size,
-              unsigned int permissions);
+                uint64_t address,
+                size_t size,
+                const uint8_t * buf,
+                size_t buf_size,
+                unsigned int permissions);
 
+// will return an appropriately sized buf if memmap_get_buf cannot fulfill
+// request. may return a buf of size 0.
+struct buf * memmap_get_buf (const struct memmap * memmap,
+                             uint64_t address,
+                             size_t size);
 
 int memmap_get_u8     (const struct memmap * memmap,
                        uint64_t address,
@@ -81,7 +87,6 @@ int memmap_get_u64_le (const struct memmap * memmap,
 int memmap_get_u64_be (const struct memmap * memmap,
                        uint64_t address,
                        uint64_t * value);
-
 
 int memmap_set_u8     (struct memmap * memmap,
                        uint64_t address,

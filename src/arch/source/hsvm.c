@@ -4,6 +4,19 @@
 
 #include <stdio.h>
 
+
+const struct arch_source arch_source_hsvm = {
+    hsvm_ip_variable,
+    hsvm_translate_ins,
+    hsvm_translate_block
+};
+
+
+const char * hsvm_ip_variable () {
+    return "rip";
+}
+
+
 struct hsvm_register {
     unsigned int value;
     const char * identifier;
@@ -87,6 +100,22 @@ enum {
 };
 
 struct hsvm_op hsvm_ops [] = {
+    {OP_ADD,      ENCODING_D},
+    {OP_ADDLVAL,  ENCODING_E},
+    {OP_SUB,      ENCODING_D},
+    {OP_SUBLVAL,  ENCODING_E},
+    {OP_MUL,      ENCODING_D},
+    {OP_MULLVAL,  ENCODING_E},
+    {OP_DIV,      ENCODING_D},
+    {OP_DIVLVAL,  ENCODING_E},
+    {OP_MOD,      ENCODING_D},
+    {OP_MODLVAL,  ENCODING_E},
+    {OP_AND,      ENCODING_D},
+    {OP_ANDLVAL,  ENCODING_E},
+    {OP_OR,       ENCODING_D},
+    {OP_ORLVAL,   ENCODING_E},
+    {OP_XOR,      ENCODING_D},
+    {OP_XORLVAL,  ENCODING_E},
     {OP_JMP,      ENCODING_F},
     {OP_JE,       ENCODING_F},
     {OP_JLE,      ENCODING_F},
@@ -226,26 +255,28 @@ struct list * hsvm_load16 (const struct boper * address,
 }
 
 
-struct list * hsvm_in (const struct boper * dst) {
-    static unsigned int in_ctr = 0;
-
-    char variable_name[32];
-    snprintf(variable_name, 32, "in_%x", in_ctr++);
-
+struct list * hsvm_in (uint8_t reg) {
     struct list * list = list_create();
-    list_append_(list, bins_zext_(OCOPY(dst), boper_variable(8, variable_name)));
+    list_append_(list, bins_or_(boper_variable(8, "in_reg"),
+                                boper_constant(8, 0),
+                                boper_constant(8, reg)));
+    list_append_(list, bins_or_(boper_variable(8, "halt_code"),
+                                boper_constant(8, 0),
+                                boper_constant(8, 1)));
+    list_append_(list, bins_hlt());
     return list;
 }
 
 
-struct list * hsvm_out (const struct boper * src) {
-    static unsigned int out_ctr = 0;
-
-    char variable_name[32];
-    snprintf(variable_name, 32, "out_%x", out_ctr++);
-
+struct list * hsvm_out (uint8_t reg) {
     struct list * list = list_create();
-    list_append_(list, bins_trun_(boper_variable(8, variable_name), OCOPY(src)));
+    list_append_(list, bins_or_(boper_variable(8, "out_reg"),
+                                boper_constant(8, 0),
+                                boper_constant(8, reg)));
+    list_append_(list, bins_or_(boper_variable(8, "halt_code"),
+                                boper_constant(8, 0),
+                                boper_constant(8, 2)));
+    list_append_(list, bins_hlt());
     return list;
 }
 
@@ -488,7 +519,7 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(list, bins_add_(boper_variable(16, "rip"),
                                      boper_variable(16, "rip"),
                                      boper_constant(16, 4)));
-        struct list * in_list = hsvm_in(ra);
+        struct list * in_list = hsvm_in(u8buf[1]);
         list_append_list(list, in_list);
         ODEL(in_list);
     }
@@ -496,7 +527,7 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(list, bins_add_(boper_variable(16, "rip"),
                                      boper_variable(16, "rip"),
                                      boper_constant(16, 4)));
-        struct list * out_list = hsvm_out(ra);
+        struct list * out_list = hsvm_out(u8buf[1]);
         list_append_list(list, out_list);
         ODEL(out_list);
     }
@@ -571,6 +602,9 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(list, bins_add_(boper_variable(16, "rip"),
                                      boper_variable(16, "rip"),
                                      boper_constant(16, 4)));
+        list_append_(list, bins_or_(boper_variable(8, "halt_code"),
+                                    boper_constant(8, 0),
+                                    boper_constant(8, 0)));
         list_append_(list, bins_hlt());
     }
     else if (u8buf[0] == OP_NOP) {
@@ -596,8 +630,8 @@ struct list * hsvm_translate_block (const void * buf, size_t size) {
 
     struct list * list = list_create();
     size_t offset;
-    for (offset = 0; offset + 4 <= size; offset += 4) {
-        struct list * ins_list = hsvm_translate_ins(&(u8buf[offset]), 4);
+    for (offset = 0; offset < size; offset += 4) {
+        struct list * ins_list = hsvm_translate_ins(&(u8buf[offset]), size - offset);
         if (ins_list == NULL) {
             ODEL(list);
             return NULL;
@@ -615,6 +649,8 @@ struct list * hsvm_translate_block (const void * buf, size_t size) {
         case OP_JGE :
         case OP_CALL :
         case OP_CALLR :
+        case OP_IN :
+        case OP_OUT :
         case OP_RET :
         case OP_HLT :
         case OP_SYSCALL :

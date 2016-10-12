@@ -1,7 +1,7 @@
 OBJS=object.o
 
 CFLAGS=-Wall -O2 -g
-LIB=arch/target/*.o bt/*.o container/*.o object.o
+LIB=arch/source/*.o arch/target/*.o bt/*.o container/*.o object.o
 INCLUDE=-I./
 
 all : $(OBJS)
@@ -11,6 +11,7 @@ all : $(OBJS)
 	make -C loader
 	make -C test
 	$(CC) -o jit_example jit_example.c $(INCLUDE) $(LIB) $(CFLAGS)
+	$(CC) -o jit_hsvm jit_hsvm.c $(INCLUDE) $(LIB) $(CFLAGS)
 
 %.o : %.c
 	$(CC) -c -o $@ $< $(INCLUDE) $(CFLAGS)
@@ -22,4 +23,6 @@ clean :
 	make -C loader clean
 	make -C test clean
 	rm -f jit_example
+	rm -f jit_hsvm
+	rm -f *.o
 	rm -rf *dSYM

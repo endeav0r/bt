@@ -170,6 +170,11 @@ int varstore_value (const struct varstore * varstore,
 }
 
 
+void * varstore_data_buf (struct varstore * varstore) {
+    return varstore->data_buf;
+}
+
+
 size_t varstore_offset_create (struct varstore * varstore,
                                const char * identifier,
                                size_t bits) {

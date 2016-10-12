@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "arch/arch.h"
 #include "bt/bins.h"
 #include "container/byte_buf.h"
 #include "container/list.h"
@@ -16,9 +17,14 @@ Return codes:
 3 - Encountered HLT instruction
 */
 
+extern const struct arch_target arch_target_amd64;
+
 
 struct byte_buf * amd64_assemble (struct list * btins_list,
                                   struct varstore * varstore);
+
+unsigned int amd64_execute (const void * code,
+                            struct varstore * varstore);
 
 int amd64_load_r_boper (struct byte_buf * bb,
                         struct varstore * varstore,

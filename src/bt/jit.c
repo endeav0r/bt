@@ -47,16 +47,15 @@ int jit_block_cmp (const struct jit_block * lhs, const struct jit_block * rhs) {
 }
 
 
-
-
 const struct object jit_object = {
-    (void (*) (void *))                    jit_delete,
-    (void * (*) (const void *))            jit_copy,
+    (void (*) (void *))          jit_delete,
+    (void * (*) (const void *))  jit_copy,
     NULL
 };
 
 
-struct jit * jit_create () {
+struct jit * jit_create (const struct arch_source * arch_source,
+                         const struct arch_target * arch_target) {
     struct jit * jit = malloc(sizeof(struct jit));
 
     jit->object = &jit_object;
@@ -67,6 +66,10 @@ struct jit * jit_create () {
                          MAP_PRIVATE | MAP_ANONYMOUS,
                          -1, 0);
     jit->mmap_size = INITIAL_MMAP_SIZE;
+    jit->mmap_next = 0;
+
+    jit->arch_source = arch_source;
+    jit->arch_target = arch_target;
 
     return jit;
 }
@@ -91,6 +94,36 @@ struct jit * jit_copy (const struct jit * jit) {
                           -1, 0);
     memcpy(copy->mmap_mem, jit->mmap_mem, jit->mmap_size);
     copy->mmap_size = jit->mmap_size;
+    copy->mmap_size = jit->mmap_next;
+
+    copy->arch_source = jit->arch_source;
+    copy->arch_target = jit->arch_target;
 
     return copy;
+}
+
+
+int jit_set_code (struct jit * jit,
+                  uint64_t vaddr,
+                  const void * code,
+                  size_t code_size) {
+    memcpy(&(jit->mmap_mem[jit->mmap_next]), code, code_size);
+
+    struct jit_block * jb = jit_block_create(vaddr, jit->mmap_next, code_size);
+    tree_insert(jit->blocks, jb);
+    
+    jit->mmap_next += code_size;
+    
+    return 0;
+}
+
+
+const void * jit_get_code (struct jit * jit, uint64_t vaddr) {
+    struct jit_block jb;
+    jb.object = &jit_block_object;
+    jb.vaddr = vaddr;
+    struct jit_block * jit_block = tree_fetch(jit->blocks, &jb);
+    if (jit_block == NULL)
+        return NULL;
+    return &(jit->mmap_mem[jit_block->mm_offset]);
 }

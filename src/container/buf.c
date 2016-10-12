@@ -34,6 +34,11 @@ struct buf * buf_copy (const struct buf * buf) {
 }
 
 
+size_t buf_length (const struct buf * buf) {
+    return buf->length;
+}
+
+
 struct buf * buf_slice (const struct buf * buf, size_t offset, size_t size) {
     if (offset + size >= buf->length)
         return NULL;

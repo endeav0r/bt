@@ -2,6 +2,12 @@
 
 #include "container/memmap.h"
 
+
+const struct arch_target arch_target_amd64 = {
+    amd64_assemble,
+    amd64_execute
+};
+
 /*
 Convention:
 When calling into hand-assembled code:
@@ -1228,4 +1234,48 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
     mov_r_imm(bb, REG_RAX, 0, 64);
     ret(bb);
     return bb;
+}
+
+
+unsigned int amd64_execute (const void * code,
+                            struct varstore * varstore) {
+    unsigned int result;
+    void * data_buf = varstore_data_buf(varstore);
+    
+    asm(
+        "push %%rbx;"
+        "push %%rbp;"
+        "mov %1, %%rbp;"
+        "mov %2, %%rax;"
+
+        // mac os x inline assemble is ridiculous, this is a workaround
+        "push %%rax;"
+        "call *(%%rsp);"
+        "pop %%rbp;"
+
+        "pop %%rbp;"
+        "pop %%rbx;"
+        "mov %%eax, %0;"
+        : "=r" (result)
+        : "r" (data_buf), "r" (code)
+        : "rax", "rcx", "rdx", "rdi", "rsi"
+    );
+    /*
+    asm(
+        ".intel_syntax noprefix;"
+        "push rbx;"
+        "push rbp;"
+        "mov rbp, %1;"
+        "mov rax, %2;"
+        "call rax;"
+        "pop rbp;"
+        "pop rbx;"
+        "mov %0, rax;"
+        ".att_syntax;"
+        : "=r" (result)
+        : "r" (data_buf), "r" (code)
+        : "rax", "rcx", "rdx", "rdi", "rsi"
+    );
+    */
+    return result;
 }

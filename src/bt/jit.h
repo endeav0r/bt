@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "arch/arch.h"
 #include "container/tree.h"
 #include "object.h"
 
@@ -27,6 +28,11 @@ struct jit {
     uint8_t * mmap_mem;
     /* size of mmap_mem */
     size_t mmap_size;
+    /* offset to next available space in mmap_mem */
+    size_t mmap_next;
+
+    const struct arch_source * arch_source;
+    const struct arch_target * arch_target;
 };
 
 
@@ -47,9 +53,16 @@ struct jit_var * jit_var_copy   (const struct jit_var * jit_var);
 int              jit_var_cmp    (const struct jit_var * lhs,
                                  const struct jit_var * rhs);
 
-
-struct jit * jit_create ();
+struct jit * jit_create (const struct arch_source * arch_source,
+                         const struct arch_target * arch_target);
 void         jit_delete (struct jit * jit);
 struct jit * jit_copy   (const struct jit * jit);
+
+int jit_set_code (struct jit * jit,
+                  uint64_t vaddr,
+                  const void * code,
+                  size_t code_size);
+
+const void * jit_get_code (struct jit * jit, uint64_t vaddr);
 
 #endif

@@ -108,11 +108,12 @@ char * boper_string (const struct boper * boper) {
     if (boper->type == BOPER_VARIABLE) {
         size_t size = strlen(boper->identifier);
         s = malloc(size + 32);
-        snprintf(s, size, "%s:%u", boper->identifier, boper->bits);
+        snprintf(s, size + 32, "%s:%u", boper->identifier, boper->bits);
     }
     else if (boper->type == BOPER_CONSTANT) {
         s = malloc(64);
-        snprintf(s, 64, "0x%llx:%u", boper_value(boper), boper->bits);
+        snprintf(s, 64, "0x%llx:%u",
+                 (unsigned long long) boper_value(boper), boper->bits);
     }
     return s;
 }
@@ -170,6 +171,7 @@ struct bins * bins_create_ (int op,
                             struct boper * oper1,
                             struct boper * oper2) {
     struct bins * bins = malloc(sizeof(struct bins));
+    bins->object = &bins_object;
     bins->op = op;
 
     bins->oper[0] = oper0;
@@ -189,6 +191,12 @@ void bins_delete (struct bins * bins) {
 
     free(bins);
 }
+
+
+struct bins * bins_copy (const struct bins * bins) {
+    return bins_create(bins->op, bins->oper[0], bins->oper[1], bins->oper[2]);
+}
+
 
 
 char * bins_string (const struct bins * bins) {
@@ -250,12 +258,6 @@ char * bins_string (const struct bins * bins) {
     return s;
 }
 
-
-struct bins * bins_copy (const struct bins * bins) {
-    return bins_create(bins->op, bins->oper[0], bins->oper[1], bins->oper[2]);
-}
-
-
 #define BINS_3OP_DEF(XXX, YYY) \
 struct bins * bins_##XXX (const struct boper * oper0, \
                           const struct boper * oper1, \
@@ -263,8 +265,8 @@ struct bins * bins_##XXX (const struct boper * oper0, \
     return bins_create(BOP_##YYY, oper0, oper1, oper2); \
 } \
 struct bins * bins_##XXX##_ (struct boper * oper0, \
-                           struct boper * oper1, \
-                           struct boper * oper2) { \
+                             struct boper * oper1, \
+                             struct boper * oper2) { \
     return bins_create_(BOP_##YYY, oper0, oper1, oper2); \
 }
 
@@ -288,12 +290,18 @@ BINS_3OP_DEF(cmples, CMPLES)
 #define BINS_2OP_DEF(XXX, YYY) \
 struct bins * bins_##XXX (const struct boper * oper0, \
                          const struct boper * oper1) { \
-    return bins_create(BOP_#YYY, oper0, oper1, NULL); \
+    return bins_create(BOP_##YYY, oper0, oper1, NULL); \
 } \
-struct bins * bins_##XXX_ (struct boper * oper0, \
+struct bins * bins_##XXX##_ (struct boper * oper0, \
                            struct boper * oper1) { \
-    return bins_create_(BOP_#YYY, oper0, oper1, NULL); \
+    return bins_create_(BOP_##YYY, oper0, oper1, NULL); \
 }
+
+BINS_2OP_DEF(sext, SEXT)
+BINS_2OP_DEF(zext, ZEXT)
+BINS_2OP_DEF(trun, TRUN)
+BINS_2OP_DEF(store, STORE)
+BINS_2OP_DEF(load, LOAD)
 
 
 struct bins * bins_hlt () {

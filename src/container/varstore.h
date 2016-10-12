@@ -4,6 +4,7 @@
 #include "container/tree.h"
 #include "object.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 struct varstore_node {
@@ -48,6 +49,8 @@ int varstore_value (const struct varstore * varstore,
                     const char * identifier,
                     size_t bits,
                     uint64_t * value);
+
+void * varstore_data_buf (struct varstore * varstore);
 
 // will create the variable if it doesn't exist, always returns an offset
 size_t varstore_offset_create (struct varstore * varstore,
