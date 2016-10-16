@@ -7,7 +7,8 @@
 #include <stdlib.h>
 
 struct arch_source {
-    const char  * (* ip_variable)       ();
+    const char  * (* ip_variable_identifier) ();
+    unsigned int  (* ip_variable_bits) ();
     struct list * (* translate_ins)   (const void * buf, size_t size);
     struct list * (* translate_block) (const void * buf, size_t size);
 };

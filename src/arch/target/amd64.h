@@ -9,6 +9,13 @@
 #include "container/list.h"
 #include "container/varstore.h"
 
+extern const struct arch_target arch_target_amd64;
+
+
+struct byte_buf * amd64_assemble (struct list * btins_list,
+                                  struct varstore * varstore);
+
+
 /*
 Return codes:
 0 - Execution Successful
@@ -16,13 +23,6 @@ Return codes:
 2 - Error writing to MMO
 3 - Encountered HLT instruction
 */
-
-extern const struct arch_target arch_target_amd64;
-
-
-struct byte_buf * amd64_assemble (struct list * btins_list,
-                                  struct varstore * varstore);
-
 unsigned int amd64_execute (const void * code,
                             struct varstore * varstore);
 

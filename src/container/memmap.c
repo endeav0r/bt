@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+// #define DEBUG
+
 const struct object memmap_page_object = {
     (void (*) (void *))                    memmap_page_delete,
     (void * (*) (const void *))            memmap_page_copy,
@@ -219,7 +221,11 @@ struct buf * memmap_get_buf (const struct memmap * memmap,
 
 int memmap_get_u8 (const struct memmap * memmap, uint64_t address, uint8_t * value) {
     int error = 0;
-    *value = memmap_byte_get(memmap, address, &error);
+    *value = memmap_byte_get(memmap, address, &error) & 0xff;
+    #ifdef DEBUG
+    printf("memmap_get_u8 address=%08llx value=%02x\n",
+           (unsigned long long) address, *value & 0xff);fflush(stdout);
+    #endif
     return error;
 }
 
@@ -324,6 +330,12 @@ int memmap_get_u64_le (const struct memmap * memmap,
 
 int memmap_set_u8 (struct memmap * memmap, uint64_t address, uint8_t value) {
     int error = 0;
+    #ifdef DEBUG
+    unsigned int tmp = value;
+    tmp &= 0xff;
+    printf("memmap_set_u8 address=%08llx value=%02x\n",
+           (unsigned long long) address, tmp);fflush(stdout);
+    #endif
     error |= memmap_byte_set(memmap, address, value);
     return error;
 }

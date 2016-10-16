@@ -2,6 +2,8 @@
 
 #include "container/memmap.h"
 
+#include <stdio.h>
+
 
 const struct arch_target arch_target_amd64 = {
     amd64_assemble,
@@ -265,9 +267,13 @@ int op_r_imm (struct byte_buf * bb,
               unsigned int bits) {
     switch (bits) {
     case 1 :
-        and_r_imm(bb, dst, 1, 8);
-        op_r_imm(bb, op, dst, imm & 1, 8);
-        and_r_imm(bb, dst, 1, 8);
+        if (op == OP_AND_R_IMM)
+            and_r_imm(bb, dst, 1, 8);
+        else {
+            and_r_imm(bb, dst, 1, 8);
+            op_r_imm(bb, op, dst, imm & 1, 8);
+            and_r_imm(bb, dst, 1, 8);
+        }
         return 0;
     case 8 :
         byte_buf_append(bb, op_r_imm_bytes[op].op8);
@@ -286,13 +292,21 @@ int op_r_imm (struct byte_buf * bb,
         byte_buf_append_le32(bb, imm);
         return 0;
     case 64 : {
-        int rhs = REG_RAX;
-        if (dst == REG_RAX)
-            rhs = REG_RCX;
-        push_r64(bb, rhs);
-        mov_r_imm(bb, rhs, imm, 64);
-        op_r_r(bb, op_r_imm_bytes[op].op_r_r, dst, rhs, 64);
-        pop_r64(bb, rhs);
+        if (imm < 0x100000) {
+            byte_buf_append(bb, 0x48);
+            byte_buf_append(bb, op_r_imm_bytes[op].op32);
+            byte_buf_append(bb, op_r_imm_bytes[op].operand_byte | dst);
+            byte_buf_append_le32(bb, imm);
+        }
+        else {
+            int rhs = REG_RAX;
+            if (dst == REG_RAX)
+                rhs = REG_RCX;
+            push_r64(bb, rhs);
+            mov_r_imm(bb, rhs, imm, 64);
+            op_r_r(bb, op_r_imm_bytes[op].op_r_r, dst, rhs, 64);
+            pop_r64(bb, rhs);
+        }
         return 0;
     }
     }
@@ -417,20 +431,20 @@ int jcc (struct byte_buf * bb, unsigned int condition, int offset) {
 
     if (abs_offset < 0x78) {
         byte_buf_append(bb, jcc_op_bytes[condition].op8);
-        byte_buf_append(bb, offset - 2);
+        byte_buf_append(bb, offset);
         return 0;
     }
     else if (abs_offset < 0x7ff0) {
         byte_buf_append(bb, 0x66);
         byte_buf_append(bb, 0x0f);
         byte_buf_append(bb, jcc_op_bytes[condition].op32);
-        byte_buf_append(bb, offset - 5);
+        byte_buf_append(bb, offset);
         return 0;
     }
     else if (abs_offset < 0x7ffffff0) {
         byte_buf_append(bb, 0x0f);
         byte_buf_append(bb, jcc_op_bytes[condition].op32);
-        byte_buf_append_le32(bb, offset - 6);
+        byte_buf_append_le32(bb, offset);
         return 0;
     }
     return -1;
@@ -444,19 +458,19 @@ int jmp (struct byte_buf * bb, int offset) {
 
     if (abs_offset < 0x78) {
         byte_buf_append(bb, 0xeb);
-        byte_buf_append(bb, offset - 2);
+        byte_buf_append(bb, offset);
         return 0;
     }
     else if (abs_offset < 0x7ff0) {
         byte_buf_append(bb, 0x66);
         byte_buf_append(bb, 0xe9);
-        byte_buf_append_le16(bb, offset - 4);
+        byte_buf_append_le16(bb, offset);
         return 0;
     }
     else if (abs_offset < 0x7ffffff0) {
         byte_buf_append(bb, 0x0f);
         byte_buf_append(bb, 0xe9);
-        byte_buf_append_le32(bb, offset - 6);
+        byte_buf_append_le32(bb, offset);
         return 0;
     }
     return -1;
@@ -495,6 +509,8 @@ int mov_r_imm (struct byte_buf * bb,
                uint64_t imm,
                unsigned int bits) {
     switch (bits) {
+    case 1 :
+        return mov_r_imm(bb, r, imm & 1, 8);
     case 8 :
         byte_buf_append(bb, 0xb0 | r);
         byte_buf_append(bb, imm);
@@ -523,6 +539,10 @@ int mov_r_r (struct byte_buf * bb,
              unsigned int rhs,
              unsigned int bits) {
     switch (bits) {
+    case 1 :
+        mov_r_r(bb, dst, rhs, 8);
+        and_r_imm(bb, dst, 1, 1);
+        return 0;
     case 8 :
         byte_buf_append(bb, 0x88);
         byte_buf_append(bb, 0xc0 | (rhs << 3) | dst);
@@ -562,18 +582,21 @@ int mov_rm_imm (struct byte_buf * bb,
                 uint64_t imm,
                 unsigned int bits) {
     switch (bits) {
+    case 1 :
+        mov_rm_imm(bb, rm, off32, imm & 1, 8);
+        return 0;
     case 8 :
         byte_buf_append(bb, 0xc6);
         byte_buf_append(bb, 0x80 | rm);
         byte_buf_append_le32(bb, off32);
-        byte_buf_append_le32(bb, imm);
+        byte_buf_append(bb, imm);
         return 0;
     case 16 :
         byte_buf_append(bb, 0x66);
         byte_buf_append(bb, 0xc7);
         byte_buf_append(bb, 0x80 | rm);
         byte_buf_append_le32(bb, off32);
-        byte_buf_append_le32(bb, imm);
+        byte_buf_append_le16(bb, imm);
         return 0;
     case 32 :
         byte_buf_append(bb, 0xc7);
@@ -670,6 +693,10 @@ int movzx_r_r (struct byte_buf * bb,
                unsigned int dst_bits,
                unsigned int src,
                unsigned int src_bits) {
+    if (src_bits == 1) {
+        and_r_imm(bb, dst, 1, 1);
+        src_bits = 8;
+    }
     if ((dst_bits == 16) && (src_bits == 8)) {
         byte_buf_append(bb, 0x66);
         byte_buf_append(bb, 0x0f);
@@ -702,7 +729,7 @@ int movzx_r_r (struct byte_buf * bb,
         if (src_bits == 16) {
             byte_buf_append(bb, 0x48);
             byte_buf_append(bb, 0x0f);
-            byte_buf_append(bb, 0xb6);
+            byte_buf_append(bb, 0xb7);
             byte_buf_append(bb, 0xc0 | (dst << 3) | src);
             return 0;
         }
@@ -809,13 +836,16 @@ int shl_r64_r64 (struct byte_buf * bb,
     byte_buf_append(shift_buf, 0xe0 | lhs);
     if (lhs != REG_RCX)
         pop_r64(shift_buf, REG_RCX);
+
     // jump over the zero buf
     jmp(shift_buf, byte_buf_length(zero_buf));
 
     // check if rhs is greater than 64
     cmp_r_imm(bb, rhs, 64, 64);
+
     // if above or equal, jump over shift_buf
     jcc(bb, JCC_JAE, byte_buf_length(shift_buf));
+
     byte_buf_append_byte_buf(bb, shift_buf);
     byte_buf_append_byte_buf(bb, zero_buf);
 
@@ -831,6 +861,16 @@ int shr_r64_r64 (struct byte_buf * bb,
                  unsigned int rhs) {
     /*
         SHR has same problems as shl
+    
+    SHR_INS :
+        cmp rhs, 64
+        jae ZERO_BUF
+    SHIFT_INF :
+        do shift
+        JMP DONE
+    ZERO_BUF :
+        mov lhs, 0
+    DONE
     */
 
     // generate bytes to set lhs to zero
@@ -847,13 +887,16 @@ int shr_r64_r64 (struct byte_buf * bb,
     byte_buf_append(shift_buf, 0xe8 | lhs);
     if (lhs != REG_RCX)
         pop_r64(shift_buf, REG_RCX);
-    // jump over the zero buf
+    
+    // jump over the zero buf in shift_buf
     jmp(shift_buf, byte_buf_length(zero_buf));
 
     // check if rhs is greater than 64
     cmp_r_imm(bb, rhs, 64, 64);
+
     // if above or equal, jump over shift_buf
     jcc(bb, JCC_JAE, byte_buf_length(shift_buf));
+
     byte_buf_append_byte_buf(bb, shift_buf);
     byte_buf_append_byte_buf(bb, zero_buf);
 
@@ -1084,9 +1127,9 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
 
             cmp_r_r(cmpop, REG_RAX, REG_RCX, boper_bits(bins->oper[1]));
 
-            mov_r_imm(al1, REG_RAX, 8, 1);
+            mov_r_imm(al1, REG_RAX, 1, 1);
 
-            mov_r_imm(al0, REG_RAX, 8, 0);
+            mov_r_imm(al0, REG_RAX, 0, 1);
             jmp(al0, byte_buf_length(al1));
 
             switch (bins->op) {
@@ -1111,7 +1154,7 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             byte_buf_append_byte_buf(bb, al0);
             byte_buf_append_byte_buf(bb, al1);
 
-            amd64_store_boper_imm(bb, varstore, bins->oper[0], REG_RAX);
+            amd64_store_boper_r(bb, varstore, bins->oper[0], REG_RAX);
 
             ODEL(cmpop);
             ODEL(al0);
@@ -1143,13 +1186,15 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
         case BOP_LOAD : {
             /* set up call to mmap_get_u8 */
             size_t offset;
-            if (varstore_offset(varstore, "__MMAP__", 64, &offset)) {
+            if (varstore_offset(varstore, "__MEMMAP__", 64, &offset)) {
+                fprintf(stderr, "__MEMMAP__ not found\n");
                 error = -1;
                 break;
             }
             // prepare call
             mov_r_rm(bb, REG_RDI, REG_RBP, offset, 64);
             amd64_load_r_boper(bb, varstore, REG_RSI, bins->oper[1]);
+            movzx_r_r(bb, REG_RSI, 64, REG_RSI, boper_bits(bins->oper[1]));
             // create scratch space
             sub_r_imm(bb, REG_RSP, 8, 64);
             mov_r_r(bb, REG_RDX, REG_RSP, 64);
@@ -1162,8 +1207,8 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
 
             // if failure, we set rax to 1 and return
             struct byte_buf * fail = byte_buf_create();
-            add_r_imm(fail, REG_RSP, 8, 64);
-            mov_r_imm(fail, REG_RAX, 1, 64);
+            add_r_imm(fail, REG_RSP, 8, 64); // clean up stack
+            mov_r_imm(fail, REG_RAX, 1, 64); // set result
             ret(fail);
 
             // if success, read byte off stack and set variable
@@ -1171,8 +1216,8 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             // mov al, [rsp+0x00000000] is not a valid instruction
             mov_r_r(success, REG_RAX, REG_RSP, 64);
             mov_r_rm(success, REG_RAX, REG_RAX, 0, 8);
-            add_r_imm(fail, REG_RSP, 8, 64);
-            amd64_store_boper_r(bb, varstore, bins->oper[0], REG_RAX);
+            amd64_store_boper_r(success, varstore, bins->oper[0], REG_RAX);
+            add_r_imm(success, REG_RSP, 8, 64); // clean up stack
 
             // compare result of our call and execution conditionally
             cmp_r_imm(bb, REG_RAX, 0, 64);
@@ -1187,7 +1232,8 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
         case BOP_STORE : {
             // set up a call to mmap_set_u8
             size_t offset;
-            if (varstore_offset(varstore, "__MMAP__", 64, &offset)) {
+            if (varstore_offset(varstore, "__MEMMAP__", 64, &offset)) {
+                fprintf(stderr, "__MEMMAP__ not found\n");
                 error = -1;
                 break;
             }
@@ -1195,19 +1241,16 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             // prepare call
             mov_r_rm(bb, REG_RDI, REG_RBP, offset, 64);
             amd64_load_r_boper(bb, varstore, REG_RSI, bins->oper[0]);
-            // create scratch space
-            sub_r_imm(bb, REG_RSP, 8, 64);
-            // move value into byte pointed to by rsp
-            mov_r_r(bb, REG_RDX, REG_RSP, 64);
-            amd64_load_r_boper(bb, varstore, REG_RAX, bins->oper[1]);
-            mov_rm_r(bb, REG_RDX, 0, REG_RCX, 8);
+            movzx_r_r(bb, REG_RSI, 64, REG_RSI, boper_bits(bins->oper[0]));
+            // move value into rdx
+            amd64_load_r_boper(bb, varstore, REG_RDX, bins->oper[1]);
+            movzx_r_r(bb, REG_RDX, 64, REG_RDX, boper_bits(bins->oper[1]));
             // execute call
             mov_r_imm(bb, REG_RAX, (uint64_t) memmap_set_u8, 64);
             call_r(bb, REG_RAX);
 
             // if fail, set rax to 2 and return
             struct byte_buf * fail = byte_buf_create();
-            add_r_imm(fail, REG_RSP, 8, 64);
             mov_r_imm(fail, REG_RAX, 2, 64);
             ret(fail);
 

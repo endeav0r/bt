@@ -29,6 +29,7 @@ const struct bins_string bins_strings [] = {
     {BOP_TRUN, "trun"},
     {BOP_STORE, "store"},
     {BOP_LOAD, "load"},
+    {BOP_HLT, "hlt"},
     {-1, NULL}
 };
 
@@ -253,6 +254,9 @@ char * bins_string (const struct bins * bins) {
         free(o1str);
         break;
     }
+    case BOP_HLT :
+        s = strdup("hlt");
+        break;
     }
 
     return s;

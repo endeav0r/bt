@@ -5,7 +5,9 @@
 #include <stdlib.h>
 
 #include "arch/arch.h"
+#include "container/memmap.h"
 #include "container/tree.h"
+#include "container/varstore.h"
 #include "object.h"
 
 #define INITIAL_MMAP_SIZE (1024 * 1024 * 32)
@@ -64,5 +66,9 @@ int jit_set_code (struct jit * jit,
                   size_t code_size);
 
 const void * jit_get_code (struct jit * jit, uint64_t vaddr);
+
+int jit_execute (struct jit * jit,
+                 struct varstore * varstore,
+                 struct memmap * memmap);
 
 #endif

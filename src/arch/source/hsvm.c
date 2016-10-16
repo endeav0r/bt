@@ -6,14 +6,20 @@
 
 
 const struct arch_source arch_source_hsvm = {
-    hsvm_ip_variable,
+    hsvm_ip_variable_identifier,
+    hsvm_ip_variable_bits,
     hsvm_translate_ins,
     hsvm_translate_block
 };
 
 
-const char * hsvm_ip_variable () {
+const char * hsvm_ip_variable_identifier () {
     return "rip";
+}
+
+
+unsigned int hsvm_ip_variable_bits () {
+    return 16;
 }
 
 
@@ -118,6 +124,7 @@ struct hsvm_op hsvm_ops [] = {
     {OP_XORLVAL,  ENCODING_E},
     {OP_JMP,      ENCODING_F},
     {OP_JE,       ENCODING_F},
+    {OP_JL,       ENCODING_F},
     {OP_JLE,      ENCODING_F},
     {OP_JG,       ENCODING_F},
     {OP_JGE,      ENCODING_F},
@@ -183,6 +190,10 @@ struct list * hsvm_translate_arith (const uint8_t * u8buf, size_t size) {
 
     struct list * list = list_create();
 
+    list_append_(list, bins_add_(boper_variable(16, "rip"),
+                                 boper_variable(16, "rip"),
+                                 boper_constant(16, 4)));
+
     switch (u8buf[0] & 0x1e) {
     case 0x10 : list_append_(list, bins_add_(dst, lhs, rhs)); break;
     case 0x12 : list_append_(list, bins_sub_(dst, lhs, rhs)); break;
@@ -197,16 +208,12 @@ struct list * hsvm_translate_arith (const uint8_t * u8buf, size_t size) {
         return NULL;
     }
 
-    list_append_(list, bins_add_(boper_variable(16, "rip"),
-                                 boper_variable(16, "rip"),
-                                 boper_constant(16, 4)));
-
     return list;
 }
 
 
 struct list * hsvm_store16 (const struct boper * address,
-                                 const struct boper * value) {
+                            const struct boper * value) {
     struct list * list = list_create();
     // store high byte
     list_append_(list, bins_shr_(boper_variable(16, "t16"),
@@ -231,15 +238,19 @@ struct list * hsvm_store16 (const struct boper * address,
 
 struct list * hsvm_load16 (const struct boper * address,
                            const struct boper * dst) {
+    // if address == dst, such as load r0, r0; we will have issues if we don't
+    // use a temporary value to load into
+    struct boper * tmpload = boper_variable(16, "tmpload");
+
     struct list * list = list_create();
     // load high byte
     list_append_(list, bins_load_(boper_variable(8, "t8"),
                                   OCOPY(address)));
     list_append_(list, bins_zext_(boper_variable(16, "t16"),
                                   boper_variable(8, "t8")));
-    list_append_(list, bins_shl_(OCOPY(dst),
-                                 boper_variable(16, "16"),
-                                 boper_constant(8, 8)));
+    list_append_(list, bins_shl_(OCOPY(tmpload),
+                                 boper_variable(16, "t16"),
+                                 boper_constant(16, 8)));
     // load low byte
     list_append_(list, bins_add_(boper_variable(16, "t16"),
                                  OCOPY(address),
@@ -249,8 +260,10 @@ struct list * hsvm_load16 (const struct boper * address,
     list_append_(list, bins_zext_(boper_variable(16, "t16"),
                                   boper_variable(8, "t8")));
     list_append_(list, bins_or_(OCOPY(dst),
-                                OCOPY(dst),
+                                OCOPY(tmpload),
                                 boper_variable(16, "t16")));
+
+    ODEL(tmpload);
     return list;
 }
 
@@ -418,14 +431,14 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
         ODEL(value);
         ODEL(address);
         if (u8buf[0] == OP_CALL) {
-            list_append_(list, bins_add_(boper_variable(16, "rsp"),
-                                         boper_variable(16, "rsp"),
+            list_append_(list, bins_add_(boper_variable(16, "rip"),
+                                         boper_variable(16, "rip"),
                                          lval));
             lval = NULL;
         }
         else {
-            list_append_(list, bins_add_(boper_variable(16, "rsp"),
-                                         boper_variable(16, "rsp"),
+            list_append_(list, bins_add_(boper_variable(16, "rip"),
+                                         boper_variable(16, "rip"),
                                          ra));
             ra = NULL;
         }
@@ -493,7 +506,7 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(list, bins_add_(boper_variable(16, "rip"),
                                      boper_variable(16, "rip"),
                                      boper_constant(16, 4)));
-        struct list * store_list = hsvm_store16(rb, ra);
+        struct list * store_list = hsvm_store16(ra, rb);
         list_append_list(list, store_list);
         ODEL(store_list);
     }
@@ -510,8 +523,8 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
         list_append_(list, bins_add_(boper_variable(16, "rip"),
                                      boper_variable(16, "rip"),
                                      boper_constant(16, 4)));
-        list_append_(list, bins_trun_(boper_variable(8, "t8"), ra));
-        list_append_(list, bins_store_(rb, boper_variable(8, "t8")));
+        list_append_(list, bins_trun_(boper_variable(8, "t8"), rb));
+        list_append_(list, bins_store_(ra, boper_variable(8, "t8")));
         ra = NULL;
         rb = NULL;
     }
@@ -591,12 +604,16 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
                                      boper_variable(16, "rip"),
                                      boper_constant(16, 4)));
         list_append_(list, bins_sub_(boper_variable(16, "flags"), ra, rb));
+        ra = NULL;
+        rb = NULL;
     }
     else if (u8buf[0] == OP_CMPLVAL) {
         list_append_(list, bins_add_(boper_variable(16, "rip"),
                                      boper_variable(16, "rip"),
                                      boper_constant(16, 4)));
         list_append_(list, bins_sub_(boper_variable(16, "flags"), ra, lval));
+        ra = NULL;
+        lval = NULL;
     }
     else if (u8buf[0] == OP_HLT) {
         list_append_(list, bins_add_(boper_variable(16, "rip"),

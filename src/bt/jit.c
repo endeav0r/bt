@@ -1,9 +1,15 @@
 #include "jit.h"
 
+#include "bt/bins.h"
+#include "container/byte_buf.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
+
+// #define DEBUG
 
 const struct object jit_block_object = {
     (void (*) (void *))                    jit_block_delete,
@@ -112,7 +118,7 @@ int jit_set_code (struct jit * jit,
     struct jit_block * jb = jit_block_create(vaddr, jit->mmap_next, code_size);
     tree_insert(jit->blocks, jb);
     
-    jit->mmap_next += code_size;
+    jit->mmap_next += (code_size + 0x100) & (~0xff);
     
     return 0;
 }
@@ -126,4 +132,95 @@ const void * jit_get_code (struct jit * jit, uint64_t vaddr) {
     if (jit_block == NULL)
         return NULL;
     return &(jit->mmap_mem[jit_block->mm_offset]);
+}
+
+
+int jit_execute (struct jit * jit,
+                 struct varstore * varstore,
+                 struct memmap * memmap) {
+    // get the instruction pointer
+    size_t offset;
+    int error = varstore_offset(varstore,
+                                jit->arch_source->ip_variable_identifier(),
+                                jit->arch_source->ip_variable_bits(),
+                                &offset);
+    if (error)
+        return -1;
+    uint8_t * data_buf = (uint8_t *) varstore_data_buf(varstore);
+    uint64_t ip;
+    switch (jit->arch_source->ip_variable_bits()) {
+    case 8 : ip = *((uint8_t *) &(data_buf[offset])); break;
+    case 16 : ip = *((uint16_t *) &(data_buf[offset])); break;
+    case 32 : ip = *((uint32_t *) &(data_buf[offset])); break;
+    case 64 : ip = *((uint64_t *) &(data_buf[offset])); break;
+    default: return -2;
+    }
+
+    // make sure memmap variable is set
+    offset = varstore_offset_create(varstore, "__MEMMAP__", 64);
+    *((uint64_t *) &(data_buf[offset])) = (uint64_t) memmap;
+
+    // do we already have this block in the jit store?
+    const void * codeptr = jit_get_code(jit, ip);
+    #ifdef DEBUG
+    printf("[jit_execute] rip=%04x\n", ip);
+    #endif
+    // we don't have this yet, jit it
+    if (codeptr == NULL) {
+        // get memory pointed to by instruction pointer
+        struct buf * buf = memmap_get_buf(memmap, ip, 256);
+
+        const uint8_t * tmp = buf_get(buf, 0, buf_length(buf));
+        //#define DEBUG
+        // translate instruction
+        struct list * binslist;
+        binslist = jit->arch_source->translate_block(buf_get(buf, 0, buf_length(buf)),
+                                                     buf_length(buf));
+
+        ODEL(buf);
+
+        if (binslist == NULL)
+            return -3;
+
+        //#define DEBUG
+        #ifdef DEBUG
+        struct list_it * it;
+        for (it = list_it(binslist); it != NULL; it = list_it_next(it)) {
+            struct bins * bins = (struct bins *) list_it_obj(it);
+
+            char * str = bins_string(bins);
+            printf("%s\n", str);
+            free(str);
+        }
+        #endif
+
+        // assemble instructions
+        struct byte_buf * assembled_buf;
+        assembled_buf = jit->arch_target->assemble(binslist, varstore);
+
+        ODEL(binslist);
+
+        if (assembled_buf == NULL)
+            return -4;
+
+        #ifdef DEBUG
+        FILE * fh = fopen("/tmp/tmpjit", "wb");
+        fwrite(byte_buf_bytes(assembled_buf), 1, byte_buf_length(assembled_buf), fh);
+        fclose(fh);
+        #endif
+
+        // set our rwx jit code
+        jit_set_code(jit,
+                     ip,
+                     byte_buf_bytes(assembled_buf),
+                     byte_buf_length(assembled_buf));
+
+        ODEL(assembled_buf);
+        codeptr = jit_get_code(jit, ip);
+    }
+
+    // execute this jit block
+    unsigned int ret_code = jit->arch_target->execute(codeptr, varstore);
+
+    return ret_code;
 }
