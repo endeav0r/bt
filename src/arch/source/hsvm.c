@@ -390,19 +390,19 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
                                            boper_variable(16, "flags"),
                                            boper_constant(16, 0)));
         else if (u8buf[0] == OP_JL)
-            list_append_(list, bins_cmpltu_(boper_variable(1, "t1"),
+            list_append_(list, bins_cmplts_(boper_variable(1, "t1"),
                                             boper_variable(16, "flags"),
                                             boper_constant(16, 0)));
         else if (u8buf[0] == OP_JLE)
-            list_append_(list, bins_cmpleu_(boper_variable(1, "t1"),
+            list_append_(list, bins_cmples_(boper_variable(1, "t1"),
                                             boper_variable(16, "flags"),
                                             boper_constant(16, 0)));
         else if (u8buf[0] == OP_JG)
-            list_append_(list, bins_cmpltu_(boper_variable(1, "t1"),
+            list_append_(list, bins_cmplts_(boper_variable(1, "t1"),
                                             boper_constant(16, 0),
                                             boper_variable(16, "flags")));
         else if (u8buf[0] == OP_JGE)
-            list_append_(list, bins_cmpleu_(boper_variable(1, "t1"),
+            list_append_(list, bins_cmples_(boper_variable(1, "t1"),
                                             boper_constant(16, 0),
                                             boper_variable(16, "flags")));
         list_append_(list, bins_zext_(boper_variable(16, "t32"),

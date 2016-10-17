@@ -23,7 +23,9 @@ int main () {
 
     struct byte_buf * bb = amd64_assemble(list, varstore);
 
-    write(1, byte_buf_bytes(bb), byte_buf_length(bb));
+    int written = write(1, byte_buf_bytes(bb), byte_buf_length(bb));
+    if (written != byte_buf_length(bb))
+      return -1;
 
     ODEL(varstore);
     ODEL(list);

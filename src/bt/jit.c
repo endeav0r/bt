@@ -1,5 +1,6 @@
 #include "jit.h"
 
+#include "btlog.h"
 #include "bt/bins.h"
 #include "container/byte_buf.h"
 
@@ -8,8 +9,6 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
-
-// #define DEBUG
 
 const struct object jit_block_object = {
     (void (*) (void *))                    jit_block_delete,
@@ -116,7 +115,7 @@ int jit_set_code (struct jit * jit,
     memcpy(&(jit->mmap_mem[jit->mmap_next]), code, code_size);
 
     struct jit_block * jb = jit_block_create(vaddr, jit->mmap_next, code_size);
-    tree_insert(jit->blocks, jb);
+    tree_insert_(jit->blocks, jb);
     
     jit->mmap_next += (code_size + 0x100) & (~0xff);
     
@@ -162,17 +161,12 @@ int jit_execute (struct jit * jit,
 
     // do we already have this block in the jit store?
     const void * codeptr = jit_get_code(jit, ip);
-    #ifdef DEBUG
-    printf("[jit_execute] rip=%04x\n", ip);
-    #endif
+    btlog("[jit_execute.rip] %04x", ip);
     // we don't have this yet, jit it
     if (codeptr == NULL) {
         // get memory pointed to by instruction pointer
         struct buf * buf = memmap_get_buf(memmap, ip, 256);
 
-        const uint8_t * tmp = buf_get(buf, 0, buf_length(buf));
-        //#define DEBUG
-        // translate instruction
         struct list * binslist;
         binslist = jit->arch_source->translate_block(buf_get(buf, 0, buf_length(buf)),
                                                      buf_length(buf));
@@ -182,17 +176,14 @@ int jit_execute (struct jit * jit,
         if (binslist == NULL)
             return -3;
 
-        //#define DEBUG
-        #ifdef DEBUG
         struct list_it * it;
         for (it = list_it(binslist); it != NULL; it = list_it_next(it)) {
             struct bins * bins = (struct bins *) list_it_obj(it);
 
             char * str = bins_string(bins);
-            printf("%s\n", str);
+            btlog("[jit_execute.bins] %s", str);
             free(str);
         }
-        #endif
 
         // assemble instructions
         struct byte_buf * assembled_buf;
@@ -202,12 +193,6 @@ int jit_execute (struct jit * jit,
 
         if (assembled_buf == NULL)
             return -4;
-
-        #ifdef DEBUG
-        FILE * fh = fopen("/tmp/tmpjit", "wb");
-        fwrite(byte_buf_bytes(assembled_buf), 1, byte_buf_length(assembled_buf), fh);
-        fclose(fh);
-        #endif
 
         // set our rwx jit code
         jit_set_code(jit,

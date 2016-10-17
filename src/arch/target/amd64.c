@@ -292,7 +292,7 @@ int op_r_imm (struct byte_buf * bb,
         byte_buf_append_le32(bb, imm);
         return 0;
     case 64 : {
-        if (imm < 0x100000) {
+        if (imm < 0x100000000) {
             byte_buf_append(bb, 0x48);
             byte_buf_append(bb, op_r_imm_bytes[op].op32);
             byte_buf_append(bb, op_r_imm_bytes[op].operand_byte | dst);
@@ -1196,6 +1196,10 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             amd64_load_r_boper(bb, varstore, REG_RSI, bins->oper[1]);
             movzx_r_r(bb, REG_RSI, 64, REG_RSI, boper_bits(bins->oper[1]));
             // create scratch space
+            // we must align RSP to a 16-byte boundary or macosx complains
+            mov_r_r(bb, REG_RAX, REG_RSP, 64);
+            and_r_imm(bb, REG_RSP, 0xfffffff0, 64);
+            push_r64(bb, REG_RAX);
             sub_r_imm(bb, REG_RSP, 8, 64);
             mov_r_r(bb, REG_RDX, REG_RSP, 64);
 
@@ -1207,7 +1211,9 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
 
             // if failure, we set rax to 1 and return
             struct byte_buf * fail = byte_buf_create();
-            add_r_imm(fail, REG_RSP, 8, 64); // clean up stack
+            // clean up stack
+            add_r_imm(fail, REG_RSP, 8, 64);
+            pop_r64(fail, REG_RSP);
             mov_r_imm(fail, REG_RAX, 1, 64); // set result
             ret(fail);
 
@@ -1217,7 +1223,9 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             mov_r_r(success, REG_RAX, REG_RSP, 64);
             mov_r_rm(success, REG_RAX, REG_RAX, 0, 8);
             amd64_store_boper_r(success, varstore, bins->oper[0], REG_RAX);
-            add_r_imm(success, REG_RSP, 8, 64); // clean up stack
+            // clean up stack
+            add_r_imm(success, REG_RSP, 8, 64);
+            pop_r64(success, REG_RSP);
 
             // compare result of our call and execution conditionally
             cmp_r_imm(bb, REG_RAX, 0, 64);
@@ -1245,9 +1253,18 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             // move value into rdx
             amd64_load_r_boper(bb, varstore, REG_RDX, bins->oper[1]);
             movzx_r_r(bb, REG_RDX, 64, REG_RDX, boper_bits(bins->oper[1]));
+            // we must align RSP to a 16-byte boundary or macosx complains
+            mov_r_r(bb, REG_RAX, REG_RSP, 64);
+            and_r_imm(bb, REG_RSP, 0xfffffff0, 64);
+            push_r64(bb, REG_RAX);
+            sub_r_imm(bb, REG_RSP, 8, 64);
             // execute call
             mov_r_imm(bb, REG_RAX, (uint64_t) memmap_set_u8, 64);
             call_r(bb, REG_RAX);
+
+            // clean up stack
+            add_r_imm(bb, REG_RSP, 8, 64);
+            pop_r64(bb, REG_RSP);
 
             // if fail, set rax to 2 and return
             struct byte_buf * fail = byte_buf_create();

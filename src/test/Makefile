@@ -2,7 +2,7 @@ OBJS=testobj.o
 
 CFLAGS=-Wall -O2 -g
 INCLUDE=-I../
-LIB=../container/*.o ../object.o *.o
+LIB=../container/*.o ../*.o *.o
 
 all : $(OBJS)
 	$(CC) -o test_object test_object.c $(INCLUDE) $(LIB) $(CFLAGS)

@@ -1,9 +1,9 @@
 #include "memmap.h"
 
+#include "btlog.h"
+
 #include <stdio.h>
 #include <string.h>
-
-// #define DEBUG
 
 const struct object memmap_page_object = {
     (void (*) (void *))                    memmap_page_delete,
@@ -157,7 +157,7 @@ int memmap_map (struct memmap * memmap,
 }
 
 
-uint8_t memmap_byte_get (const struct memmap * memmap,
+uint8_t __attribute__ ((noinline)) memmap_byte_get (const struct memmap * memmap,
                          uint64_t address,
                          int * error) {
     struct memmap_page page;
@@ -167,6 +167,7 @@ uint8_t memmap_byte_get (const struct memmap * memmap,
 
     page.object = &memmap_page_object;
     page.address = page_address;
+
 
     struct memmap_page * tree_page = tree_fetch(memmap->tree, &page);
     if (tree_page == NULL) {
@@ -178,7 +179,7 @@ uint8_t memmap_byte_get (const struct memmap * memmap,
 }
 
 
-int memmap_byte_set (struct memmap * memmap, uint64_t address, uint8_t byte) {
+int __attribute__ ((noinline)) memmap_byte_set (struct memmap * memmap, uint64_t address, uint8_t byte) {
     struct memmap_page page;
 
     uint64_t page_address = address & (~(memmap->page_size - 1));
@@ -219,13 +220,13 @@ struct buf * memmap_get_buf (const struct memmap * memmap,
 }
 
 
-int memmap_get_u8 (const struct memmap * memmap, uint64_t address, uint8_t * value) {
+int memmap_get_u8 (const struct memmap * memmap,
+                   uint64_t address,
+                   uint8_t * value) {
     int error = 0;
-    *value = memmap_byte_get(memmap, address, &error) & 0xff;
-    #ifdef DEBUG
-    printf("memmap_get_u8 address=%08llx value=%02x\n",
-           (unsigned long long) address, *value & 0xff);fflush(stdout);
-    #endif
+    *value = memmap_byte_get(memmap, address, &error);
+    unsigned int v = *value;
+    btlog("[memmap_get_u8] address=%08llx, %02x", address, v, 0, 0);
     return error;
 }
 
@@ -330,12 +331,7 @@ int memmap_get_u64_le (const struct memmap * memmap,
 
 int memmap_set_u8 (struct memmap * memmap, uint64_t address, uint8_t value) {
     int error = 0;
-    #ifdef DEBUG
-    unsigned int tmp = value;
-    tmp &= 0xff;
-    printf("memmap_set_u8 address=%08llx value=%02x\n",
-           (unsigned long long) address, tmp);fflush(stdout);
-    #endif
+    btlog("[memmap_set_u8] address=%08llx, %02x", address, value, 0, 0);
     error |= memmap_byte_set(memmap, address, value);
     return error;
 }

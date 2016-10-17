@@ -1,5 +1,6 @@
 #include "arch/source/hsvm.h"
 #include "arch/target/amd64.h"
+#include "btlog.h"
 #include "bt/bins.h"
 #include "bt/jit.h"
 #include "container/byte_buf.h"
@@ -60,6 +61,9 @@ uint16_t get_rip (struct varstore * varstore) {
 
 
 int main (int argc, char * argv[]) {
+    // turn on debugging
+    btlog_continuous("jit_hsvm.debug");
+
     // Read in HSVM binary
     FILE * fh = fopen(argv[1], "rb");
     if (fh == NULL) {
@@ -79,13 +83,12 @@ int main (int argc, char * argv[]) {
 
     fclose(fh);
 
-    printf("read %s %u bytes\n", argv[1], (unsigned int) filesize);
-    fflush(stdout);
+    btlog("[jit_hsvm] read %s %u bytes", argv[1], (unsigned int) filesize);
 
     // Create the memmap
     struct memmap * memmap = memmap_create(4096);
 
-    printf("created memmap\n");
+    btlog("[jit_hsvm] created memmap");
     fflush(stdout);
 
     // insert our code into memmap
@@ -96,42 +99,40 @@ int main (int argc, char * argv[]) {
                filesize,
                MEMMAP_R | MEMMAP_W | MEMMAP_X);
 
-    printf("initialized memmap\n");
+    free(buf);
+
+    btlog("[jit_hsvm] initialized memmap");
     fflush(stdout);
 
     // create our jit
     struct jit * jit = jit_create(&arch_source_hsvm, &arch_target_amd64);
-    printf("created jit\n");
+    btlog("[jit_hsvm] created jit");
     fflush(stdout);
 
     // create our varstore
     struct varstore * varstore = varstore_create();
-    printf("created varstore\n");
+    btlog("[jit_hsvm] created varstore");
     fflush(stdout);
 
     // init and set rip
     size_t offset = varstore_insert(varstore, "rip", 16);
     uint8_t * data_buf = (uint8_t *) varstore_data_buf(varstore);
     *((uint16_t *) &(data_buf[offset])) = 0;
-    printf("rip set and init\n");
+    btlog("[jit_hsvm] rip set and init");
     fflush(stdout);
 
     // init and set rsp
     offset = varstore_insert(varstore, "rsp", 16);
     data_buf = (uint8_t *) varstore_data_buf(varstore);
     *((uint16_t *) &(data_buf[offset])) = 0xfff8;
-    printf("rsp set and init\n");
+    btlog("[jit_hsvm] rsp set and init");
     fflush(stdout);
 
     //unsigned int hlt_code = 0;
 
     do {
         uint16_t rip = get_rip(varstore);
-        //if (rip == 0x38e) return 0;
-        //#define DEBUG
-        #ifdef DEBUG
-        printf("rip 0x%04x\n", rip);fflush(stdout);
-        #endif
+        btlog("[jit_hsvm.rip] %04x", rip);
         int result = jit_execute(jit, varstore, memmap);
         //if (rip == 0x37a) break;
         if (result < 0) {
@@ -140,13 +141,20 @@ int main (int argc, char * argv[]) {
         }
         else if (result == 3) {
             int error = varstore_offset(varstore, "halt_code", 8, &offset);
+            if (error) {
+                fprintf(stderr, "error getting halt code\n");
+                return -1;
+            }
             // OUT reg
             if (data_buf[offset] == 2) {
                 varstore_offset(varstore, "out_reg", 8, &offset);
                 unsigned int reg_code = data_buf[offset];
                 varstore_offset(varstore, get_reg_string(reg_code), 16, &offset);
                 uint8_t r = *((uint16_t *) &(data_buf[offset]));
-                write(0, &r, 1);
+                if (write(1, &r, 1) != 1) {
+                    fprintf(stderr, "error writing to stdout\n");
+                    return -1;
+                }
             }
             // IN reg
             else if (data_buf[offset] == 1) {
@@ -154,12 +162,18 @@ int main (int argc, char * argv[]) {
                 unsigned int reg_code = data_buf[offset];
                 offset = varstore_offset_create(varstore, get_reg_string(reg_code), 16);
                 uint8_t r;
-                read(1, &r, 1);
+                if (read(0, &r, 1) != 1) {
+                    fprintf(stderr, "error reading from stdin\n");
+                    return -1;
+                }
                 *((uint16_t *) &(data_buf[offset])) = r;
             }
-            else {
-                printf("halt code %d\n", data_buf[offset]);
+            // hlt instruction
+            else if (data_buf[offset] == 0)
                 break;
+            else {
+                fprintf(stderr, "unhandled halt code %d\n", data_buf[offset]);
+                return -1;;
             }
         }
         else if (result) {

@@ -1,0 +1,1170 @@
+[jit_hsvm] read ../example_programs/hsvm/news 1170 bytes
+[jit_hsvm] created memmap
+[jit_hsvm] initialized memmap
+[jit_hsvm] created jit
+[jit_hsvm] created varstore
+[jit_hsvm] rip set and init
+[jit_hsvm] rsp set and init
+[jit_hsvm.rip] 0000
+[jit_execute.rip] 0000
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or rbp:16, rsp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x112:16
+[jit_hsvm.rip] 011a
+[jit_execute.rip] 011a
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r0:16, 0x8:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r0:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r0:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rip:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rip:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x234:16
+[memmap_set_u8] address=0000fff6, 00
+[memmap_set_u8] address=0000fff7, 08
+[memmap_set_u8] address=0000fff4, 01
+[memmap_set_u8] address=0000fff5, 26
+[jit_hsvm.rip] 035a
+[jit_execute.rip] 035a
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rbp:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rbp:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or rbp:16, rsp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r1:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r1:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r0:16, rbp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r0:16, r0:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r0:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, r0:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r0:16, tmpload:16, t16:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r0:16
+[jit_execute.bins] zext r1:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r1:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0xc:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[memmap_set_u8] address=0000fff2, ff
+[memmap_set_u8] address=0000fff3, f8
+[memmap_set_u8] address=0000fff0, 00
+[memmap_set_u8] address=0000fff1, 00
+[memmap_get_u8] address=0000fff6, 00
+[memmap_get_u8] address=0000fff7, 08
+[memmap_get_u8] address=00000008, 57
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or out_reg:8, 0x0:8, 0x1:8
+[jit_execute.bins] or halt_code:8, 0x0:8, 0x2:8
+[jit_execute.bins] hlt
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r0:16, r0:16, 0x1:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0xffe8:16
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r0:16
+[jit_execute.bins] zext r1:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r1:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0xc:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[memmap_get_u8] address=00000009, 65
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000000a, 6c
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000000b, 63
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000000c, 6f
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000000d, 6d
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000000e, 65
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000000f, 20
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000010, 74
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000011, 6f
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000012, 20
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000013, 74
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000014, 68
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000015, 65
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000016, 20
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000017, 6e
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000018, 65
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000019, 77
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000001a, 73
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000001b, 20
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000001c, 73
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000001d, 79
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000001e, 73
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000001f, 74
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000020, 65
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000021, 6d
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000022, 21
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000023, 0a
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000024, 00
+[jit_hsvm.rip] 038a
+[jit_execute.rip] 038a
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r1:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rbp:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rip:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[memmap_get_u8] address=0000fff0, 00
+[memmap_get_u8] address=0000fff1, 00
+[memmap_get_u8] address=0000fff2, ff
+[memmap_get_u8] address=0000fff3, f8
+[memmap_get_u8] address=0000fff4, 01
+[memmap_get_u8] address=0000fff5, 26
+[jit_hsvm.rip] 0126
+[jit_execute.rip] 0126
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rip:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rip:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x50:16
+[memmap_set_u8] address=0000fff6, 01
+[memmap_set_u8] address=0000fff7, 2e
+[jit_hsvm.rip] 017e
+[jit_execute.rip] 017e
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rbp:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rbp:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or rbp:16, rsp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r1:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r1:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x28:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, 0x25:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, 0x25:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rip:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rip:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x1c4:16
+[memmap_set_u8] address=0000fff4, ff
+[memmap_set_u8] address=0000fff5, f8
+[memmap_set_u8] address=0000fff2, 00
+[memmap_set_u8] address=0000fff3, 00
+[memmap_set_u8] address=0000ffc8, 00
+[memmap_set_u8] address=0000ffc9, 25
+[memmap_set_u8] address=0000ffc6, 01
+[memmap_set_u8] address=0000ffc7, 96
+[jit_hsvm.rip] 035a
+[jit_execute.rip] 035a
+[memmap_set_u8] address=0000ffc4, ff
+[memmap_set_u8] address=0000ffc5, f4
+[memmap_set_u8] address=0000ffc2, 00
+[memmap_set_u8] address=0000ffc3, 00
+[memmap_get_u8] address=0000ffc8, 00
+[memmap_get_u8] address=0000ffc9, 25
+[memmap_get_u8] address=00000025, 3e
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000026, 20
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000027, 00
+[jit_hsvm.rip] 038a
+[jit_execute.rip] 038a
+[memmap_get_u8] address=0000ffc2, 00
+[memmap_get_u8] address=0000ffc3, 00
+[memmap_get_u8] address=0000ffc4, ff
+[memmap_get_u8] address=0000ffc5, f4
+[memmap_get_u8] address=0000ffc6, 01
+[memmap_get_u8] address=0000ffc7, 96
+[jit_hsvm.rip] 0196
+[jit_execute.rip] 0196
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r1:16, rbp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub r1:16, r1:16, 0x2a:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r1:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r1:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rip:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rip:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x1ec:16
+[memmap_set_u8] address=0000ffc8, ff
+[memmap_set_u8] address=0000ffc9, ca
+[memmap_set_u8] address=0000ffc6, 01
+[memmap_set_u8] address=0000ffc7, aa
+[jit_hsvm.rip] 0396
+[jit_execute.rip] 0396
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rbp:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rbp:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or rbp:16, rsp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r1:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r1:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r2:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r2:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r0:16, rbp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r0:16, r0:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r0:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, r0:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r0:16, tmpload:16, t16:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r2:16, r0:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or in_reg:8, 0x0:8, 0x1:8
+[jit_execute.bins] or halt_code:8, 0x0:8, 0x1:8
+[jit_execute.bins] hlt
+[memmap_set_u8] address=0000ffc4, ff
+[memmap_set_u8] address=0000ffc5, f4
+[memmap_set_u8] address=0000ffc2, ff
+[memmap_set_u8] address=0000ffc3, ca
+[memmap_set_u8] address=0000ffc0, 00
+[memmap_set_u8] address=0000ffc1, 00
+[memmap_get_u8] address=0000ffc8, ff
+[memmap_get_u8] address=0000ffc9, ca
+[jit_hsvm.rip] 03ba
+[jit_execute.rip] 03ba
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r1:16, 0xa:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x1c:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 03c2
+[jit_execute.rip] 03c2
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r1:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x14:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 03ca
+[jit_execute.rip] 03ca
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r1:16, 0xffff:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0xc:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 03d2
+[jit_execute.rip] 03d2
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] trun t8:8, r1:16
+[jit_execute.bins] store r0:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r0:16, r0:16, 0x1:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0xffd8:16
+[memmap_set_u8] address=0000ffca, 71
+[jit_hsvm.rip] 03b6
+[jit_execute.rip] 03b6
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or in_reg:8, 0x0:8, 0x1:8
+[jit_execute.bins] or halt_code:8, 0x0:8, 0x1:8
+[jit_execute.bins] hlt
+[jit_hsvm.rip] 03ba
+[jit_execute.rip] 03ba
+[jit_hsvm.rip] 03c2
+[jit_execute.rip] 03c2
+[jit_hsvm.rip] 03ca
+[jit_execute.rip] 03ca
+[jit_hsvm.rip] 03d2
+[jit_execute.rip] 03d2
+[memmap_set_u8] address=0000ffcb, 75
+[jit_hsvm.rip] 03b6
+[jit_execute.rip] 03b6
+[jit_hsvm.rip] 03ba
+[jit_execute.rip] 03ba
+[jit_hsvm.rip] 03c2
+[jit_execute.rip] 03c2
+[jit_hsvm.rip] 03ca
+[jit_execute.rip] 03ca
+[jit_hsvm.rip] 03d2
+[jit_execute.rip] 03d2
+[memmap_set_u8] address=0000ffcc, 69
+[jit_hsvm.rip] 03b6
+[jit_execute.rip] 03b6
+[jit_hsvm.rip] 03ba
+[jit_execute.rip] 03ba
+[jit_hsvm.rip] 03c2
+[jit_execute.rip] 03c2
+[jit_hsvm.rip] 03ca
+[jit_execute.rip] 03ca
+[jit_hsvm.rip] 03d2
+[jit_execute.rip] 03d2
+[memmap_set_u8] address=0000ffcd, 74
+[jit_hsvm.rip] 03b6
+[jit_execute.rip] 03b6
+[jit_hsvm.rip] 03ba
+[jit_execute.rip] 03ba
+[jit_hsvm.rip] 03de
+[jit_execute.rip] 03de
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r1:16, 0x0:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] trun t8:8, r1:16
+[jit_execute.bins] store r0:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub r0:16, r0:16, r2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r2:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r1:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rbp:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rip:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[memmap_set_u8] address=0000ffce, 00
+[memmap_get_u8] address=0000ffc0, 00
+[memmap_get_u8] address=0000ffc1, 00
+[memmap_get_u8] address=0000ffc2, ff
+[memmap_get_u8] address=0000ffc3, ca
+[memmap_get_u8] address=0000ffc4, ff
+[memmap_get_u8] address=0000ffc5, f4
+[memmap_get_u8] address=0000ffc6, 01
+[memmap_get_u8] address=0000ffc7, aa
+[jit_hsvm.rip] 01aa
+[jit_execute.rip] 01aa
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, 0x28:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, 0x28:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rip:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rip:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x128:16
+[memmap_set_u8] address=0000ffc6, 00
+[memmap_set_u8] address=0000ffc7, 28
+[memmap_set_u8] address=0000ffc4, 01
+[memmap_set_u8] address=0000ffc5, b2
+[jit_hsvm.rip] 02da
+[jit_execute.rip] 02da
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rbp:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rbp:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or rbp:16, rsp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r1:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r1:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r2:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r2:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r3:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r3:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r0:16, rbp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r0:16, r0:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r0:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, r0:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r0:16, tmpload:16, t16:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r1:16, rbp:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r1:16, r1:16, 0x6:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r1:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, r1:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r1:16, tmpload:16, t16:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r0:16
+[jit_execute.bins] zext r2:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r1:16
+[jit_execute.bins] zext r3:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r2:16, r3:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmplts t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x18:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[memmap_set_u8] address=0000ffc2, ff
+[memmap_set_u8] address=0000ffc3, f4
+[memmap_set_u8] address=0000ffc0, ff
+[memmap_set_u8] address=0000ffc1, ca
+[memmap_set_u8] address=0000ffbe, 00
+[memmap_set_u8] address=0000ffbf, 00
+[memmap_set_u8] address=0000ffbc, 00
+[memmap_set_u8] address=0000ffbd, 00
+[memmap_get_u8] address=0000ffc6, 00
+[memmap_get_u8] address=0000ffc7, 28
+[memmap_get_u8] address=0000ffc8, ff
+[memmap_get_u8] address=0000ffc9, ca
+[memmap_get_u8] address=00000028, 68
+[memmap_get_u8] address=0000ffca, 71
+[jit_hsvm.rip] 032e
+[jit_execute.rip] 032e
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r0:16, 0xffff:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x10:16
+[jit_hsvm.rip] 0346
+[jit_execute.rip] 0346
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r3:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r2:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r1:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rbp:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rip:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[memmap_get_u8] address=0000ffbc, 00
+[memmap_get_u8] address=0000ffbd, 00
+[memmap_get_u8] address=0000ffbe, 00
+[memmap_get_u8] address=0000ffbf, 00
+[memmap_get_u8] address=0000ffc0, ff
+[memmap_get_u8] address=0000ffc1, ca
+[memmap_get_u8] address=0000ffc2, ff
+[memmap_get_u8] address=0000ffc3, f4
+[memmap_get_u8] address=0000ffc4, 01
+[memmap_get_u8] address=0000ffc5, b2
+[jit_hsvm.rip] 01b2
+[jit_execute.rip] 01b2
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r0:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x40:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 01be
+[jit_execute.rip] 01be
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, r1:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, r1:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, 0x32:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, 0x32:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rip:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rip:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x110:16
+[memmap_set_u8] address=0000ffc8, ff
+[memmap_set_u8] address=0000ffc9, ca
+[memmap_set_u8] address=0000ffc6, 00
+[memmap_set_u8] address=0000ffc7, 32
+[memmap_set_u8] address=0000ffc4, 01
+[memmap_set_u8] address=0000ffc5, ca
+[jit_hsvm.rip] 02da
+[jit_execute.rip] 02da
+[memmap_set_u8] address=0000ffc2, ff
+[memmap_set_u8] address=0000ffc3, f4
+[memmap_set_u8] address=0000ffc0, ff
+[memmap_set_u8] address=0000ffc1, ca
+[memmap_set_u8] address=0000ffbe, 00
+[memmap_set_u8] address=0000ffbf, 00
+[memmap_set_u8] address=0000ffbc, 00
+[memmap_set_u8] address=0000ffbd, 00
+[memmap_get_u8] address=0000ffc6, 00
+[memmap_get_u8] address=0000ffc7, 32
+[memmap_get_u8] address=0000ffc8, ff
+[memmap_get_u8] address=0000ffc9, ca
+[memmap_get_u8] address=00000032, 71
+[memmap_get_u8] address=0000ffca, 71
+[jit_hsvm.rip] 0316
+[jit_execute.rip] 0316
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmplts t1:1, 0x0:16, flags:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x1c:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r2:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x1c:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 0322
+[jit_execute.rip] 0322
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r0:16, r0:16, 0x1:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add r1:16, r1:16, 0x1:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0xffd8:16
+[jit_hsvm.rip] 0306
+[jit_execute.rip] 0306
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r0:16
+[jit_execute.bins] zext r2:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, r1:16
+[jit_execute.bins] zext r3:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r2:16, r3:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmplts t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x18:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[memmap_get_u8] address=00000033, 75
+[memmap_get_u8] address=0000ffcb, 75
+[jit_hsvm.rip] 0316
+[jit_execute.rip] 0316
+[jit_hsvm.rip] 0322
+[jit_execute.rip] 0322
+[jit_hsvm.rip] 0306
+[jit_execute.rip] 0306
+[memmap_get_u8] address=00000034, 69
+[memmap_get_u8] address=0000ffcc, 69
+[jit_hsvm.rip] 0316
+[jit_execute.rip] 0316
+[jit_hsvm.rip] 0322
+[jit_execute.rip] 0322
+[jit_hsvm.rip] 0306
+[jit_execute.rip] 0306
+[memmap_get_u8] address=00000035, 74
+[memmap_get_u8] address=0000ffcd, 74
+[jit_hsvm.rip] 0316
+[jit_execute.rip] 0316
+[jit_hsvm.rip] 0322
+[jit_execute.rip] 0322
+[jit_hsvm.rip] 0306
+[jit_execute.rip] 0306
+[memmap_get_u8] address=00000036, 00
+[memmap_get_u8] address=0000ffce, 00
+[jit_hsvm.rip] 0316
+[jit_execute.rip] 0316
+[jit_hsvm.rip] 033e
+[jit_execute.rip] 033e
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r0:16, 0x0:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x0:16
+[jit_hsvm.rip] 0346
+[jit_execute.rip] 0346
+[memmap_get_u8] address=0000ffbc, 00
+[memmap_get_u8] address=0000ffbd, 00
+[memmap_get_u8] address=0000ffbe, 00
+[memmap_get_u8] address=0000ffbf, 00
+[memmap_get_u8] address=0000ffc0, ff
+[memmap_get_u8] address=0000ffc1, ca
+[memmap_get_u8] address=0000ffc2, ff
+[memmap_get_u8] address=0000ffc3, f4
+[memmap_get_u8] address=0000ffc4, 01
+[memmap_get_u8] address=0000ffc5, ca
+[jit_hsvm.rip] 01ca
+[jit_execute.rip] 01ca
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r0:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x30:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 0206
+[jit_execute.rip] 0206
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or r0:16, 0x3:16, 0x0:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rip:16, rip:16, 0x8:16
+[jit_hsvm.rip] 0216
+[jit_execute.rip] 0216
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x28:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or r1:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rbp:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] load t8:8, rsp:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] shl tmpload:16, t16:16, 0x8:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] load t8:8, t16:16
+[jit_execute.bins] zext t16:16, t8:8
+[jit_execute.bins] or rip:16, tmpload:16, t16:16
+[jit_execute.bins] add rsp:16, rsp:16, 0x2:16
+[memmap_get_u8] address=0000fff2, 00
+[memmap_get_u8] address=0000fff3, 00
+[memmap_get_u8] address=0000fff4, ff
+[memmap_get_u8] address=0000fff5, f8
+[memmap_get_u8] address=0000fff6, 01
+[memmap_get_u8] address=0000fff7, 2e
+[jit_hsvm.rip] 012e
+[jit_execute.rip] 012e
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r0:16, 0x1:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x14:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 0136
+[jit_execute.rip] 0136
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r0:16, 0x2:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x30:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 013e
+[jit_execute.rip] 013e
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub flags:16, r0:16, 0x3:16
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] cmpeq t1:1, flags:16, 0x0:16
+[jit_execute.bins] zext t32:16, t1:1
+[jit_execute.bins] umul t32:16, 0x1c:16, t32:16
+[jit_execute.bins] add rip:16, rip:16, t32:16
+[jit_hsvm.rip] 0162
+[jit_execute.rip] 0162
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, 0x4e:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, 0x4e:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] sub rsp:16, rsp:16, 0x2:16
+[jit_execute.bins] shr t16:16, rip:16, 0x8:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] store rsp:16, t8:8
+[jit_execute.bins] and t16:16, rip:16, 0xff:16
+[jit_execute.bins] trun t8:8, t16:16
+[jit_execute.bins] add t16:16, rsp:16, 0x1:16
+[jit_execute.bins] store t16:16, t8:8
+[jit_execute.bins] add rip:16, rip:16, 0x1f0:16
+[memmap_set_u8] address=0000fff6, 00
+[memmap_set_u8] address=0000fff7, 4e
+[memmap_set_u8] address=0000fff4, 01
+[memmap_set_u8] address=0000fff5, 6a
+[jit_hsvm.rip] 035a
+[jit_execute.rip] 035a
+[memmap_set_u8] address=0000fff2, ff
+[memmap_set_u8] address=0000fff3, f8
+[memmap_set_u8] address=0000fff0, 00
+[memmap_set_u8] address=0000fff1, 00
+[memmap_get_u8] address=0000fff6, 00
+[memmap_get_u8] address=0000fff7, 4e
+[memmap_get_u8] address=0000004e, 47
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=0000004f, 6f
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000050, 6f
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000051, 64
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000052, 62
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000053, 79
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000054, 65
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000055, 21
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000056, 0a
+[jit_hsvm.rip] 037e
+[jit_execute.rip] 037e
+[jit_hsvm.rip] 0382
+[jit_execute.rip] 0382
+[jit_hsvm.rip] 0372
+[jit_execute.rip] 0372
+[memmap_get_u8] address=00000057, 00
+[jit_hsvm.rip] 038a
+[jit_execute.rip] 038a
+[memmap_get_u8] address=0000fff0, 00
+[memmap_get_u8] address=0000fff1, 00
+[memmap_get_u8] address=0000fff2, ff
+[memmap_get_u8] address=0000fff3, f8
+[memmap_get_u8] address=0000fff4, 01
+[memmap_get_u8] address=0000fff5, 6a
+[jit_hsvm.rip] 016a
+[jit_execute.rip] 016a
+[jit_execute.bins] add rip:16, rip:16, 0x4:16
+[jit_execute.bins] or halt_code:8, 0x0:8, 0x0:8
+[jit_execute.bins] hlt

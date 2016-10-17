@@ -61,6 +61,10 @@ struct varstore * varstore_create () {
     varstore->object = &varstore_object;
     varstore->tree = tree_create();
     varstore->data_buf = malloc(256);
+
+    // don't remove this memset. not having this causes valgrind to freak out.
+    memset(varstore->data_buf, 0, 256);
+
     varstore->next_offset = 0;
     varstore->data_buf_size = 256;
     return varstore;
@@ -101,8 +105,12 @@ size_t varstore_insert (struct varstore * varstore,
 
     // make sure we have room in data_buf
     if (varstore->next_offset + bytes > varstore->data_buf_size) {
+        varstore->data_buf = realloc(varstore->data_buf,
+                                     varstore->data_buf_size * 2);
+        // don't remove this memset. not having this causes valgrind to freak out.
+        memset(&(varstore->data_buf), 0, varstore->data_buf_size);
         varstore->data_buf_size *= 2;
-        varstore->data_buf = realloc(varstore->data_buf, varstore->data_buf_size);
+        
     }
 
     // drop this node into tree
