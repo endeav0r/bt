@@ -243,3 +243,105 @@ struct tree_node * tree_node_split (struct tree_node * node) {
     }
     return node;
 }
+
+
+const struct object tree_it_object = {
+    (void (*) (void *)) tree_it_obj_delete,
+    (void * (*) (const void *)) tree_it_obj_copy,
+    NULL
+};
+
+
+struct tree_it_obj * tree_it_obj_create (struct tree_node * node) {
+    struct tree_it_obj * tio = malloc(sizeof(struct tree_it_obj));
+    tio->object = &tree_it_object;
+    tio->node = node;
+    return tio;
+}
+
+
+void tree_it_obj_delete (struct tree_it_obj * tio) {
+    free(tio);
+}
+
+
+struct tree_it_obj * tree_it_obj_copy (const struct tree_it_obj * tio) {
+    return tree_it_obj_create(tio->node);
+}
+
+
+enum {
+    LEFT,
+    RIGHT
+};
+
+
+int tree_it_walk_left (struct list * list);
+
+
+struct tree_it * tree_it (struct tree * tree) {
+    if (tree->nodes == NULL)
+        return NULL;
+
+    struct tree_it * it = malloc(sizeof(struct tree_it));
+    it->list = list_create();
+    list_append_(it->list, tree_it_obj_create(tree->nodes));
+
+    tree_it_walk_left(it->list);
+
+    return it;
+}
+
+
+void tree_it_delete (struct tree_it * it) {
+    ODEL(it->list);
+    free(tree_it);
+}
+
+
+void * tree_it_data (struct tree_it * it) {
+    struct tree_it_obj * tio = list_back(it->list);
+    return tio->node;
+}
+
+
+int tree_it_walk_left (struct list * list) {
+    struct tree_it_obj * tio = list_back(list);
+    while (tio->node->left != NULL) {
+        list_append_(list, tree_it_obj_create(tio->node->left));
+        tio = list_back(list);
+    }
+    return 0;
+}
+
+
+struct tree_it * tree_it_next (struct tree_it * it) {
+    struct tree_it_obj * tio = list_back(it->list);
+    if (tio->node->right) {
+        struct tree_node * tmp = tio->node->right;
+        list_pop_back(it->list);
+        list_append_(it->list, tree_it_obj_create(tmp));
+        tree_it_walk_left(it->list);
+        return it;
+    }
+    else {
+        list_pop_back(it->list);
+        if (list_front(it->list) == NULL) {
+            tree_it_delete(it);
+            return NULL;
+        }
+        return it;
+    }
+}
+
+
+struct tree * tree_map (struct tree * tree, void (* f) (void *)) {
+    struct tree * result = tree_create();
+    struct tree_it * it;
+    for (it = tree_it(tree); it != NULL; it = tree_it_next(it)) {
+        void * obj = OCOPY(tree_it_data(it));
+        f(obj);
+        tree_insert(result, obj);
+    }
+    return result;
+}

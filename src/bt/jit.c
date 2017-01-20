@@ -116,9 +116,9 @@ int jit_set_code (struct jit * jit,
 
     struct jit_block * jb = jit_block_create(vaddr, jit->mmap_next, code_size);
     tree_insert_(jit->blocks, jb);
-    
+
     jit->mmap_next += (code_size + 0x100) & (~0xff);
-    
+
     return 0;
 }
 
@@ -178,7 +178,7 @@ int jit_execute (struct jit * jit,
 
         struct list_it * it;
         for (it = list_it(binslist); it != NULL; it = list_it_next(it)) {
-            struct bins * bins = (struct bins *) list_it_obj(it);
+            struct bins * bins = (struct bins *) list_it_data(it);
 
             char * str = bins_string(bins);
             btlog("[jit_execute.bins] %s", str);

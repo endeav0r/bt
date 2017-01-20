@@ -28,7 +28,7 @@ int main () {
     unsigned int i = 0;
     struct list_it * it;
     for (it = list_it(list); it != NULL; it = list_it_next(it)) {
-        testobj = (struct testobj *) list_it_obj(it);
+        testobj = (struct testobj *) list_it_data(it);
         assert(testobj->value == values[i++]);
     }
 

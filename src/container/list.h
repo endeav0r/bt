@@ -31,8 +31,9 @@ void * list_back         (struct list * list);
 void   list_pop_front    (struct list * list);
 void   list_pop_back     (struct list * list);
 
-struct list_it * list_it      (struct list * list);
-void *           list_it_obj  (struct list_it * it);
-struct list_it * list_it_next (struct list_it * it);
+struct list_it * list_it        (struct list * list);
+void *           list_it_data   (struct list_it * it);
+struct list_it * list_it_next   (struct list_it * it);
+struct list_it * list_it_remove (struct list * list, struct list_it * it);
 
 #endif

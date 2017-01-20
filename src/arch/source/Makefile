@@ -1,4 +1,4 @@
-OBJS=hsvm.o x86.o
+OBJS=hsvm.o 
 
 CFLAGS=-Wall -O2 -g
 INCLUDE=-I../../

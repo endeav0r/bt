@@ -98,7 +98,7 @@ void write_btlog (const char * filename) {
     struct list_it * it;
 
     for (it = list_it(btlog_list); it != NULL; it = list_it_next(it)) {
-        struct btlog_object * btlog_object = list_it_obj(it);
+        struct btlog_object * btlog_object = list_it_data(it);
         fprintf(fh, "%s\n", btlog_object->line);
     }
 

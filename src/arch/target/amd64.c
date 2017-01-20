@@ -15,7 +15,7 @@ Convention:
 When calling into hand-assembled code:
 1) rbp points to the variable_space buffer
 2) We only treat eax, ebx, ecx, edx, esi, edi as GPRs. Prefer eax/ebx/ecx/edx.
-3) Never use esi or edi when operand size <= 8 
+3) Never use esi or edi when operand size <= 8
 */
 
 #define REG_RAX 0x0
@@ -814,7 +814,7 @@ int shl_r64_r64 (struct byte_buf * bb,
                  unsigned int lhs,
                  unsigned int rhs) {
     /*
-        We can only shift left by an 8-bit value, however btins requires all 
+        We can only shift left by an 8-bit value, however btins requires all
         operands to be of the same size, and our shift size can be any valid
         value up to 64-bits. If we truncate a 64-bit value to 8-bits, and the
         shift size is >= 256, we could shift the wrong number of bits.
@@ -861,7 +861,7 @@ int shr_r64_r64 (struct byte_buf * bb,
                  unsigned int rhs) {
     /*
         SHR has same problems as shl
-    
+
     SHR_INS :
         cmp rhs, 64
         jae ZERO_BUF
@@ -887,7 +887,7 @@ int shr_r64_r64 (struct byte_buf * bb,
     byte_buf_append(shift_buf, 0xe8 | lhs);
     if (lhs != REG_RCX)
         pop_r64(shift_buf, REG_RCX);
-    
+
     // jump over the zero buf in shift_buf
     jmp(shift_buf, byte_buf_length(zero_buf));
 
@@ -985,7 +985,7 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
     struct byte_buf * bb = byte_buf_create();
     struct list_it * it;
     for (it = list_it(btins_list); it != NULL; it = list_it_next(it)) {
-        struct bins * bins = list_it_obj(it);
+        struct bins * bins = list_it_data(it);
 
         switch (bins->op) {
         // arithmetic instructions that operate directly against rm
@@ -1301,7 +1301,7 @@ unsigned int amd64_execute (const void * code,
                             struct varstore * varstore) {
     unsigned int result;
     void * data_buf = varstore_data_buf(varstore);
-    
+
     asm(
         "push %%rbx;"
         "push %%rbp;"

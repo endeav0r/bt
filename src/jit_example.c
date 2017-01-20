@@ -9,6 +9,7 @@
 int main () {
     struct list * list = list_create();
 
+    /*
     list_append_(list, bins_or(boper_variable(32, "eax"),
                                boper_constant(32, 0),
                                boper_constant(32, 7)));
@@ -18,6 +19,23 @@ int main () {
     list_append_(list, bins_add(boper_variable(32, "eax"),
                                 boper_variable(32, "eax"),
                                 boper_variable(32, "ecx")));
+    */
+
+    list_append(list, bins_add_(boper_variable(16, "rip"),
+                                boper_variable(16, "rip"),
+                                boper_constant(16, 4)));
+    list_append(list, bins_or_(boper_variable(16, "r0"),
+                               boper_constant(16, 8),
+                               boper_constant(16, 0)));
+    list_append(list, bins_add_(boper_variable(16, "rip"),
+                                boper_variable(16, "rip"),
+                                boper_constant(16, 4)));
+    list_append(list, bins_sub_(boper_variable(16, "rsp"),
+                                boper_variable(16, "rsp"),
+                                boper_constant(16, 2)));
+    list_append(list, bins_shr_(boper_variable(16, "t16"),
+                                boper_variable(16, "r0"),
+                                boper_constant(16, 8)));
 
     struct varstore * varstore = varstore_create();
 

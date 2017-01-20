@@ -75,7 +75,7 @@ void list_append_list (struct list * dst, const struct list * src) {
     struct list * s = (struct list *) src;
     struct list_it * it;
     for (it = list_it(s); it != NULL; it = list_it_next(it)) {
-        list_append(dst, list_it_obj(it));
+        list_append(dst, list_it_data(it));
     }
 }
 
@@ -143,7 +143,7 @@ struct list_it * list_it (struct list * list) {
 }
 
 
-void * list_it_obj (struct list_it * it) {
+void * list_it_data (struct list_it * it) {
     return it->obj;
 }
 
@@ -152,4 +152,27 @@ struct list_it * list_it_next (struct list_it * it) {
     if (it == NULL)
         return NULL;
     return it->next;
+}
+
+
+struct list_it * list_it_remove (struct list * list, struct list_it * it) {
+    if (it == NULL)
+        return NULL;
+
+    struct list_it * next = it->next;
+
+    if (it->prev != NULL)
+        it->prev->next = it->next;
+    if (it->next != NULL)
+        it->next->prev = it->prev;
+
+    if (list->front == it)
+        list->front = it->next;
+    if (list->back == it)
+        list->back = it->prev;
+
+    ODEL(it->obj);
+    free(it);
+
+    return next;
 }
