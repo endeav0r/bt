@@ -29,7 +29,9 @@ enum {
     BOP_LOAD,
 
     BOP_HLT,
-    BOP_CALL
+    BOP_CALL,
+
+    BOP_COMMENT
 };
 
 
@@ -123,6 +125,7 @@ BINS_2OP_DECL(trun)
 BINS_2OP_DECL(load)
 BINS_2OP_DECL(store)
 
-struct bins * bins_hlt  ();
+struct bins * bins_hlt     ();
+struct bins * bins_comment ();
 
 #endif

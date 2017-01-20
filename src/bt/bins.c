@@ -30,6 +30,7 @@ const struct bins_string bins_strings [] = {
     {BOP_STORE, "store"},
     {BOP_LOAD, "load"},
     {BOP_HLT, "hlt"},
+    {BOP_COMMENT, "comment"},
     {-1, NULL}
 };
 
@@ -261,6 +262,9 @@ char * bins_string (const struct bins * bins) {
     case BOP_HLT :
         s = strdup("hlt");
         break;
+    case BOP_COMMENT :
+        s = strdup("comment");
+        break;
     }
 
     return s;
@@ -314,4 +318,9 @@ BINS_2OP_DEF(load, LOAD)
 
 struct bins * bins_hlt () {
     return bins_create(BOP_HLT, NULL, NULL, NULL);
+}
+
+
+struct bins * bins_comment () {
+    return bins_create(BOP_COMMENT, NULL, NULL, NULL);
 }
