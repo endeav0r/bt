@@ -10,7 +10,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-const struct object jit_block_object = {
+const struct object_vtable jit_block_vtable = {
     (void (*) (void *))                    jit_block_delete,
     (void * (*) (const void *))            jit_block_copy,
     (int (*) (const void *, const void *)) jit_block_cmp
@@ -22,7 +22,7 @@ struct jit_block * jit_block_create (uint64_t vaddr,
                                      size_t size) {
     struct jit_block * jit_block = malloc(sizeof(struct jit_block));
 
-    jit_block->object = &jit_block_object;
+    object_init(&(jit_block->oh), &jit_block_vtable);
     jit_block->vaddr = vaddr;
     jit_block->mm_offset = mm_offset;
     jit_block->size = size;
@@ -52,7 +52,7 @@ int jit_block_cmp (const struct jit_block * lhs, const struct jit_block * rhs) {
 }
 
 
-const struct object jit_object = {
+const struct object_vtable jit_vtable = {
     (void (*) (void *))          jit_delete,
     (void * (*) (const void *))  jit_copy,
     NULL
@@ -63,7 +63,7 @@ struct jit * jit_create (const struct arch_source * arch_source,
                          const struct arch_target * arch_target) {
     struct jit * jit = malloc(sizeof(struct jit));
 
-    jit->object = &jit_object;
+    object_init(&(jit->oh), &jit_vtable);
     jit->blocks = tree_create();
     jit->mmap_mem = mmap(NULL,
                          INITIAL_MMAP_SIZE,
@@ -90,7 +90,7 @@ void jit_delete (struct jit * jit) {
 struct jit * jit_copy (const struct jit * jit) {
     struct jit * copy = malloc(sizeof(struct jit));
 
-    copy->object = &jit_object;
+    object_init(&(copy->oh), &jit_vtable);
     copy->blocks = OCOPY(jit->blocks);
     copy->mmap_mem = mmap(NULL,
                           jit->mmap_size,
@@ -125,7 +125,7 @@ int jit_set_code (struct jit * jit,
 
 const void * jit_get_code (struct jit * jit, uint64_t vaddr) {
     struct jit_block jb;
-    jb.object = &jit_block_object;
+    object_init(&(jb.oh), &jit_block_vtable);
     jb.vaddr = vaddr;
     struct jit_block * jit_block = tree_fetch(jit->blocks, &jb);
     if (jit_block == NULL)

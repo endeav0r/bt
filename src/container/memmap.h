@@ -13,7 +13,7 @@
 #define MEMMAP_X 4
 
 struct memmap_page {
-    const struct object * object;
+    struct object_header oh;
     uint64_t address;
     uint8_t * data;
     size_t size;
@@ -31,7 +31,7 @@ int                  memmap_page_cmp    (const struct memmap_page * lhs,
 
 
 struct memmap {
-    const struct object * object;
+    struct object_header oh;
     struct tree * tree;
     unsigned int page_size;
 };

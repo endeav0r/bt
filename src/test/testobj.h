@@ -4,7 +4,7 @@
 #include "object.h"
 
 struct testobj {
-    const struct object * object;
+    struct object_header oh;
     unsigned int value;
 };
 

@@ -13,7 +13,7 @@ struct tree_node {
 
 
 struct tree {
-    const struct object * object;
+    struct object_header oh;
     struct tree_node * nodes;
 };
 
@@ -41,7 +41,7 @@ struct tree_node * tree_node_split (struct tree_node * node);
 
 
 struct tree_it_obj {
-    const struct object * object;
+    struct object_header oh;
     struct tree_node * node;
 };
 

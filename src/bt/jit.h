@@ -14,7 +14,7 @@
 #define INITIAL_VAR_MEM_SIZE (8 * 128)
 
 struct jit_block {
-    const struct object * object;
+    struct object_header oh;
     uint64_t vaddr;
     size_t mm_offset;
     size_t size;
@@ -22,7 +22,7 @@ struct jit_block {
 
 
 struct jit {
-    const struct object * object;
+    struct object_header oh;
     /* A tree of jit_block structs we use to find jit code for blocks by
        virtual address. */
     struct tree * blocks;

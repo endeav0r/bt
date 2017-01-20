@@ -8,7 +8,7 @@
 
 
 struct gvertex {
-    const struct object * object;
+    struct object_header oh;
     uint64_t identifier;
     void * data;
     struct list * edges;
@@ -19,14 +19,14 @@ struct gvertex * gvertex_create  (uint64_t identifier, const void * data);
 void             gvertex_delete  (struct gvertex *);
 struct gvertex * gvertex_copy    (const struct gvertex *);
 int              gvertex_cmp (const struct gvertex * lhs,
-     const struct gvertex * rhs);
+                              const struct gvertex * rhs);
 struct list * gvertex_edges        (struct gvertex *);
 struct list * gvertex_successors   (struct gvertex *);
 struct list * gvertex_predecessors (struct gvertex *);
 
 
 struct gedge {
-    const struct object * object;
+    struct object_header oh;
     void * data;
     uint64_t head_identifier;
     uint64_t tail_identifier;
@@ -43,7 +43,7 @@ struct gedge * gedge_copy (const struct gedge * gedge);
 
 
 struct graph {
-    const struct object * object;
+    struct object_header oh;
     struct tree * vertices;
 };
 

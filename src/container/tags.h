@@ -13,13 +13,13 @@ enum {
 };
 
 struct tag {
-    const struct object * object;
+    struct object_header oh;
     char * name;
     int type;
     union {
         uint64_t uint64;
         char * string;
-        void * obj;
+        void * object;
     };
 };
 
@@ -39,7 +39,7 @@ void *       tag_object (struct tag * tag);
 
 
 struct tags {
-    const struct object * object;
+    struct object_header oh;
     struct tree * tags;
 };
 

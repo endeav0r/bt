@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-const struct object gvertex_object = {
+const struct object_vtable gvertex_vtable = {
     (void (*) (void *)) gvertex_delete,
     (void * (*) (const void *)) gvertex_copy,
     (int (*) (const void *, const void *)) gvertex_cmp
@@ -12,7 +12,7 @@ const struct object gvertex_object = {
 
 struct gvertex * gvertex_create_ (uint64_t identifier, void * data) {
     struct gvertex * gvertex = malloc(sizeof(struct gvertex));
-    gvertex->object = &gvertex_object;
+    object_init(&(gvertex->oh), &gvertex_vtable);
     gvertex->identifier = identifier;
     gvertex->data = data;
     gvertex->edges = list_create();
@@ -84,7 +84,7 @@ struct list * gvertex_predecessors (struct gvertex * gvertex) {
 
 
 
-const struct object gedge_object = {
+const struct object_vtable gedge_vtable = {
     (void (*) (void *)) gedge_delete,
     (void * (*) (const void *)) gedge_copy,
     NULL
@@ -95,7 +95,7 @@ struct gedge * gedge_create_ (void * data,
                               uint64_t head_identifier,
                               uint64_t tail_identifier) {
     struct gedge * gedge = malloc(sizeof(struct gedge));
-    gedge->object = &gedge_object;
+    object_init(&(gedge->oh), &gedge_vtable);
     gedge->data = data;
     gedge->head_identifier = head_identifier;
     gedge->tail_identifier = tail_identifier;
@@ -126,7 +126,7 @@ struct gedge * gedge_copy (const struct gedge * gedge) {
 
 
 
-const struct object graph_object = {
+const struct object_vtable graph_vtable = {
     (void (*) (void *)) graph_delete,
     (void * (*) (const void *)) graph_copy,
     NULL
@@ -135,14 +135,14 @@ const struct object graph_object = {
 
 struct graph * graph_create () {
     struct graph * graph = malloc(sizeof(struct graph));
-    graph->object = &graph_object;
+    object_init(&(graph->oh), &graph_vtable);
     graph->vertices = tree_create();
     return graph;
 }
 
 
 void graph_delete (struct graph * graph) {
-    tree_delete(graph->vertices);
+    ODEL(graph->vertices);
     free(graph);
 }
 

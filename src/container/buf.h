@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 struct buf {
-    const struct object * object;
+    struct object_header oh;
     uint8_t * buf;
     size_t length;
 };

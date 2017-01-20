@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const struct object varstore_node_object = {
+const struct object_vtable varstore_node_vtable = {
     (void (*) (void *)) varstore_node_delete,
     (void * (*) (const void *)) varstore_node_copy,
     (int (*) (const void *, const void *)) varstore_node_cmp
@@ -12,9 +12,9 @@ const struct object varstore_node_object = {
 
 struct varstore_node * varstore_node_create (const char * identifier,
                                              size_t bits,
-                                             size_t offset) { 
+                                             size_t offset) {
     struct varstore_node * vn = malloc(sizeof(struct varstore_node));
-    vn->object = &varstore_node_object;
+    object_init(&(vn->oh), &varstore_node_vtable);
     vn->identifier = strdup(identifier);
     vn->bits = bits;
     vn->offset = offset;
@@ -49,7 +49,7 @@ int varstore_node_cmp (
 }
 
 
-const struct object varstore_object = {
+const struct object_vtable varstore_vtable = {
     (void (*) (void *)) varstore_delete,
     (void * (*) (const void *)) varstore_copy,
     NULL
@@ -58,7 +58,7 @@ const struct object varstore_object = {
 
 struct varstore * varstore_create () {
     struct varstore * varstore = malloc(sizeof(struct varstore));
-    varstore->object = &varstore_object;
+    object_init(&(varstore->oh), &varstore_vtable);
     varstore->tree = tree_create();
     varstore->data_buf = malloc(256);
 
@@ -80,8 +80,8 @@ void varstore_delete (struct varstore * varstore) {
 
 struct varstore * varstore_copy (const struct varstore * varstore) {
     struct varstore * new = malloc(sizeof(struct varstore));
-    new->object = &varstore_object;
-    new->tree = tree_copy(varstore->tree);
+    object_init(&(new->oh), &varstore_vtable);
+    new->tree = OCOPY(varstore->tree);
     new->data_buf = malloc(varstore->data_buf_size);
     memcpy(new->data_buf, varstore->data_buf, varstore->data_buf_size);
     new->data_buf_size = varstore->data_buf_size;
@@ -110,7 +110,7 @@ size_t varstore_insert (struct varstore * varstore,
         // don't remove this memset. not having this causes valgrind to freak out.
         memset(&(varstore->data_buf), 0, varstore->data_buf_size);
         varstore->data_buf_size *= 2;
-        
+
     }
 
     // drop this node into tree
@@ -130,7 +130,7 @@ int varstore_offset (const struct varstore * varstore,
                      size_t bits,
                      size_t * offset) {
     struct varstore_node varstore_node;
-    varstore_node.object = &varstore_node_object;
+    object_init(&(varstore_node.oh), &varstore_node_vtable);
     varstore_node.identifier = (char *) identifier;
     varstore_node.bits = bits;
     struct varstore_node * vn = tree_fetch(varstore->tree, &varstore_node);
@@ -149,7 +149,7 @@ int varstore_value (const struct varstore * varstore,
                     size_t bits,
                     uint64_t * value) {
     struct varstore_node varstore_node;
-    varstore_node.object = &varstore_node_object;
+    object_init(&(varstore_node.oh), &varstore_node_vtable);
     varstore_node.identifier = (char *) identifier;
     varstore_node.bits = bits;
     struct varstore_node * vn = tree_fetch(varstore->tree, &varstore_node);

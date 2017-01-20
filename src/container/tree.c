@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-const struct object tree_object = {
+const struct object_vtable tree_vtable = {
     (void (*) (void *)) tree_delete,
     (void * (*) (const void *)) tree_copy,
     NULL
@@ -13,7 +13,7 @@ const struct object tree_object = {
 struct tree * tree_create () {
     struct tree * tree = malloc(sizeof(struct tree));
 
-    tree->object = &tree_object;
+    object_init(&(tree->oh), &tree_vtable);
     tree->nodes = NULL;
 
     return tree;
@@ -245,7 +245,7 @@ struct tree_node * tree_node_split (struct tree_node * node) {
 }
 
 
-const struct object tree_it_object = {
+const struct object_vtable tree_it_obj_vtable = {
     (void (*) (void *)) tree_it_obj_delete,
     (void * (*) (const void *)) tree_it_obj_copy,
     NULL
@@ -254,7 +254,7 @@ const struct object tree_it_object = {
 
 struct tree_it_obj * tree_it_obj_create (struct tree_node * node) {
     struct tree_it_obj * tio = malloc(sizeof(struct tree_it_obj));
-    tio->object = &tree_it_object;
+    object_init(&(tio->oh), &tree_it_obj_vtable);
     tio->node = node;
     return tio;
 }
@@ -295,7 +295,7 @@ struct tree_it * tree_it (struct tree * tree) {
 
 void tree_it_delete (struct tree_it * it) {
     ODEL(it->list);
-    free(tree_it);
+    free(it);
 }
 
 

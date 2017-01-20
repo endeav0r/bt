@@ -11,7 +11,7 @@ struct list_it {
 
 
 struct list {
-    const struct object * object;
+    struct object_header oh;
     struct list_it * front;
     struct list_it * back;
 };

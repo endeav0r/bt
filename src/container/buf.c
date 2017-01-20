@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const struct object buf_object = {
+const struct object_vtable buf_vtable = {
     (void (*) (void *)) buf_delete,
     (void * (*) (const void *)) buf_copy,
     NULL
@@ -12,8 +12,7 @@ const struct object buf_object = {
 
 struct buf * buf_create (size_t length) {
     struct buf * buf = malloc(sizeof(struct buf));
-
-    buf->object = &buf_object;
+    object_init(&(buf->oh), &buf_vtable);
     buf->length = length;
     buf->buf = malloc(length);
 

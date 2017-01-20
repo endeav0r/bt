@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const struct object byte_buf_object = {
+const struct object_vtable byte_buf_vtable = {
     (void (*) (void *)) byte_buf_delete,
     (void * (*) (const void *)) byte_buf_copy,
     NULL
@@ -12,7 +12,7 @@ const struct object byte_buf_object = {
 
 struct byte_buf * byte_buf_create () {
     struct byte_buf * byte_buf = malloc(sizeof(struct byte_buf));
-    byte_buf->object = &byte_buf_object;
+    object_init(&(byte_buf->oh), &byte_buf_vtable);
     byte_buf->buf = malloc(16);
     byte_buf->length = 0;
     byte_buf->allocated_size = 16;
@@ -28,7 +28,7 @@ void byte_buf_delete (struct byte_buf * byte_buf) {
 
 struct byte_buf * byte_buf_copy (const struct byte_buf * byte_buf) {
     struct byte_buf * new = malloc(sizeof(struct byte_buf));
-    new->object = &byte_buf_object;
+    object_init(&(new->oh), &byte_buf_vtable);
     new->buf = malloc(byte_buf->allocated_size);
     memcpy(new->buf, byte_buf->buf, byte_buf->length);
     new->length = byte_buf->length;

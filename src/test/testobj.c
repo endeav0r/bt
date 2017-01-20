@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-const struct object testobj_object = {
+const struct object_vtable testobj_vtable = {
     (void (*) (void *)) testobj_delete,
     (void * (*) (const void *)) testobj_copy,
     (int (*) (const void *, const void *)) testobj_cmp
@@ -12,7 +12,7 @@ const struct object testobj_object = {
 
 struct testobj * testobj_create (unsigned int value) {
     struct testobj * testobj = malloc(sizeof(struct testobj));
-    testobj->object = &testobj_object;
+    object_init(&(testobj->oh), &testobj_vtable);
     testobj->value = value;
     return testobj;
 }

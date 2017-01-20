@@ -20,21 +20,21 @@ FILE * btlog_fh = NULL;
 
 
 
-const struct object btlog_object_object = {
+const struct object_vtable btlog_object_object = {
     (void (*) (void *)) btlog_object_delete,
     (void * (*) (const void *)) btlog_object_copy,
     NULL
 };
 
 struct btlog_object {
-    const struct object * object;
+    struct object_header oh;
     char * line;
 };
 
 
 struct btlog_object * btlog_object_create (const char * line) {
     struct btlog_object * btlog_object = malloc(sizeof(struct btlog_object));
-    btlog_object->object = &btlog_object_object;
+    object_init(&(btlog_object->oh), &btlog_object_object);
     btlog_object->line = strdup(line);
     return btlog_object;
 }

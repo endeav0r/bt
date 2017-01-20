@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-const struct object list_object = {
+const struct object_vtable list_vtable = {
     (void (*) (void *)) list_delete,
     (void * (*) (const void *)) list_copy,
     NULL
@@ -13,7 +13,7 @@ const struct object list_object = {
 struct list * list_create () {
     struct list * list = malloc(sizeof(struct list));
 
-    list->object = &list_object;
+    object_init(&(list->oh), &list_vtable);
     list->front = NULL;
     list->back = NULL;
 

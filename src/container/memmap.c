@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-const struct object memmap_page_object = {
+const struct object_vtable memmap_page_vtable = {
     (void (*) (void *))                    memmap_page_delete,
     (void * (*) (const void *))            memmap_page_copy,
     (int (*) (const void *, const void *)) memmap_page_cmp
@@ -16,8 +16,7 @@ struct memmap_page * memmap_page_create (uint64_t address,
                                          size_t size,
                                          unsigned int permissions) {
     struct memmap_page * memmap_page = malloc(sizeof(struct memmap_page));
-
-    memmap_page->object  = &memmap_page_object;
+    object_init(&(memmap_page->oh), &memmap_page_vtable);
     memmap_page->address = address;
     memmap_page->data    = malloc(size);
     memmap_page->size    = size;
@@ -52,7 +51,7 @@ int memmap_page_cmp (const struct memmap_page * lhs,
 }
 
 
-const struct object memmap_object = {
+const struct object_vtable memmap_vtable = {
     (void (*) (void *)) memmap_delete,
     (void * (*) (const void *)) memmap_copy,
     NULL
@@ -62,7 +61,7 @@ const struct object memmap_object = {
 struct memmap * memmap_create (unsigned int page_size) {
     struct memmap * memmap = malloc(sizeof(struct memmap));
 
-    memmap->object = &memmap_object;
+    object_init(&(memmap->oh), &memmap_vtable);
     memmap->tree = tree_create();
     memmap->page_size = page_size;
 
@@ -165,7 +164,7 @@ uint8_t __attribute__ ((noinline)) memmap_byte_get (const struct memmap * memmap
     uint64_t page_address = address & (~(memmap->page_size - 1));
     uint64_t page_offset  = address - page_address;
 
-    page.object = &memmap_page_object;
+    object_init(&(page.oh), &memmap_page_vtable);
     page.address = page_address;
 
 
@@ -185,7 +184,7 @@ int __attribute__ ((noinline)) memmap_byte_set (struct memmap * memmap, uint64_t
     uint64_t page_address = address & (~(memmap->page_size - 1));
     uint64_t page_offset  = address - page_address;
 
-    page.object = &memmap_page_object;
+    object_init(&(page.oh), &memmap_page_vtable);
     page.address = page_address;
 
     struct memmap_page * tree_page = tree_fetch(memmap->tree, &page);

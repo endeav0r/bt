@@ -40,7 +40,7 @@ enum {
 
 
 struct boper {
-    const struct object * object;
+    struct object_header oh;
     unsigned int type;
     unsigned int bits;
     const char * identifier;
@@ -49,7 +49,7 @@ struct boper {
 
 
 struct bins {
-    const struct object * object;
+    struct object_header oh;
     int op;
     union {
         struct boper * oper[3];

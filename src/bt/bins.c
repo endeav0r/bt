@@ -33,7 +33,7 @@ const struct bins_string bins_strings [] = {
     {-1, NULL}
 };
 
-const struct object boper_object = {
+const struct object_vtable boper_vtable = {
     (void (*) (void *)) boper_delete,
     (void * (*) (const void *)) boper_copy,
     (int (*) (const void *, const void *)) boper_cmp
@@ -46,7 +46,7 @@ struct boper * boper_create (unsigned int type,
                              uint64_t value) {
     struct boper * boper = malloc(sizeof(struct boper));
 
-    boper->object = &boper_object;
+    object_init(&(boper->oh), &boper_vtable);
     boper->type = type;
     boper->bits = bits;
     if (identifier != NULL)
@@ -137,7 +137,9 @@ uint64_t boper_value (const struct boper * boper) {
     return boper->value & (((uint64_t) 1 << (uint64_t) boper->bits) - 1);
 }
 
-const struct object bins_object = {
+
+
+const struct object_vtable bins_vtable = {
     (void (*) (void *)) bins_delete,
     (void * (*) (const void *)) bins_copy,
     NULL
@@ -149,7 +151,8 @@ struct bins * bins_create (int op,
                            const struct boper * oper1,
                            const struct boper * oper2) {
     struct bins * bins = malloc(sizeof(struct bins));
-    bins->object = &bins_object;
+
+    object_init(&(bins->oh), &bins_vtable);
     bins->op = op;
     if (oper0)
         bins->oper[0] = OCOPY(oper0);
@@ -172,7 +175,8 @@ struct bins * bins_create_ (int op,
                             struct boper * oper1,
                             struct boper * oper2) {
     struct bins * bins = malloc(sizeof(struct bins));
-    bins->object = &bins_object;
+
+    object_init(&(bins->oh), &bins_vtable);
     bins->op = op;
 
     bins->oper[0] = oper0;

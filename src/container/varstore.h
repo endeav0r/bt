@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 struct varstore_node {
-    const struct object * object;
+    struct object_header oh;
     char * identifier;
     size_t bits;
     size_t offset;
@@ -25,7 +25,7 @@ int varstore_node_cmp (const struct varstore_node * lhs,
 
 
 struct varstore {
-    const struct object * object;
+    struct object_header oh;
     struct tree * tree;
     uint8_t * data_buf;
     size_t next_offset;

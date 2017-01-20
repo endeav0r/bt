@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 struct byte_buf {
-    const struct object * object;
+    struct object_header oh;
     uint8_t * buf;
     size_t length; // number of bytes used
     size_t allocated_size; // number of bytes allocated

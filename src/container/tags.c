@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const struct object tag_object_o = {
+const struct object_vtable tag_vtable = {
     (void (*) (void *)) tag_delete,
     (void * (*) (const void *)) tag_copy,
     (int (*) (const void *, const void *)) tag_cmp
@@ -12,7 +12,7 @@ const struct object tag_object_o = {
 
 struct tag * tag_create (const char * name, int type) {
     struct tag * tag = malloc(sizeof(struct tag));
-    tag->object = &tag_object_o;
+    object_init(&(tag->oh), &tag_vtable);
 
     tag->name = strdup(name);
     tag->type = type;
@@ -35,9 +35,9 @@ struct tag * tag_create_string (const char * name, const char * string) {
 }
 
 
-struct tag * tag_create_object_ (const char * name, void * obj) {
+struct tag * tag_create_object_ (const char * name, void * object) {
     struct tag * tag = tag_create(name, TAG_OBJECT);
-    tag->obj = obj;
+    tag->object = object;
     return tag;
 }
 
@@ -56,7 +56,7 @@ void tag_delete (struct tag * tag) {
         free(tag->string);
         break;
     case TAG_OBJECT :
-        ODEL(tag->obj);
+        ODEL(tag->object);
         break;
     }
     free(tag);
@@ -94,12 +94,12 @@ const char * tag_string (const struct tag * tag) {
 
 
 void * tag_object (struct tag * tag) {
-    return tag->obj;
+    return tag->object;
 }
 
 
 
-const struct object tags_object = {
+const struct object_vtable tags_vtable = {
     (void (*) (void *)) tags_delete,
     (void * (*) (const void *)) tags_copy,
     NULL
@@ -108,14 +108,14 @@ const struct object tags_object = {
 
 struct tags * tags_create () {
     struct tags * tags = malloc(sizeof(struct tags));
-    tags->object = &tags_object;
+    object_init(&(tags->oh), &tags_vtable);
     tags->tags = tree_create();
     return tags;
 }
 
 
 void tags_delete (struct tags * tags) {
-    tree_delete(tags->tags);
+    ODEL(tags->tags);
     free(tags);
 }
 
