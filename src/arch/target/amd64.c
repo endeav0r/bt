@@ -849,8 +849,8 @@ int shl_r64_r64 (struct byte_buf * bb,
     byte_buf_append_byte_buf(bb, shift_buf);
     byte_buf_append_byte_buf(bb, zero_buf);
 
-    byte_buf_delete(shift_buf);
-    byte_buf_delete(zero_buf);
+    ODEL(shift_buf);
+    ODEL(zero_buf);
 
     return 0;
 }
@@ -900,8 +900,8 @@ int shr_r64_r64 (struct byte_buf * bb,
     byte_buf_append_byte_buf(bb, shift_buf);
     byte_buf_append_byte_buf(bb, zero_buf);
 
-    byte_buf_delete(shift_buf);
-    byte_buf_delete(zero_buf);
+    ODEL(shift_buf);
+    ODEL(zero_buf);
 
     return 0;
 }

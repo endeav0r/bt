@@ -124,8 +124,8 @@ struct target * target_create (struct mmap * mmap_) {
 
 void target_delete (struct target * target) {
     free(target->variable_space);
-    tree_delete(target->variables);
-    tree_delete(target->codeblocks);
+    ODEL(target->variables);
+    ODEL(target->codeblocks);
     munmap(target->rwx_mem, target->rwx_mem_size);
     free(target);
 }
@@ -155,5 +155,3 @@ struct target * target_copy (const struct target * target) {
 
     return new;
 }
-
-
