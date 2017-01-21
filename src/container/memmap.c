@@ -21,6 +21,7 @@ struct memmap_page * memmap_page_create (uint64_t address,
     memmap_page->data    = malloc(size);
     memmap_page->size    = size;
     memmap_page->permissions = permissions;
+    memset(memmap_page->data, 0, memmap_page->size);
 
     return memmap_page;
 }
@@ -64,6 +65,7 @@ struct memmap * memmap_create (unsigned int page_size) {
     object_init(&(memmap->oh), &memmap_vtable);
     memmap->tree = tree_create();
     memmap->page_size = page_size;
+    memmap->flags = 0;
 
     return memmap;
 }
@@ -79,16 +81,22 @@ struct memmap * memmap_copy (const struct memmap * memmap) {
     struct memmap * copy = memmap_create(memmap->page_size);
     ODEL(copy->tree);
     copy->tree = OCOPY(memmap->tree);
+    copy->flags = memmap->flags;
     return copy;
 }
 
 
+void memmap_set_flags (struct memmap * memmap, unsigned int flags) {
+    memmap->flags = flags;
+}
+
+
 int memmap_map (struct memmap * memmap,
-              uint64_t address,
-              size_t size,
-              const uint8_t * buf,
-              size_t buf_size,
-              unsigned int permissions) {
+                uint64_t address,
+                size_t size,
+                const uint8_t * buf,
+                size_t buf_size,
+                unsigned int permissions) {
 
     if (buf_size > size)
         return -1;
@@ -167,9 +175,14 @@ uint8_t __attribute__ ((noinline)) memmap_byte_get (const struct memmap * memmap
     object_init(&(page.oh), &memmap_page_vtable);
     page.address = page_address;
 
-
     struct memmap_page * tree_page = tree_fetch(memmap->tree, &page);
-    if (tree_page == NULL) {
+    if ((tree_page == NULL) && (memmap->flags & MEMMAP_NOFAIL)) {
+        tree_page = memmap_page_create(page_address,
+                                       memmap->page_size,
+                                       MEMMAP_R | MEMMAP_W | MEMMAP_X);
+        tree_insert_(memmap->tree, tree_page);
+    }
+    else if (tree_page == NULL) {
         *error = 1;
         return 0;
     }
@@ -188,7 +201,13 @@ int __attribute__ ((noinline)) memmap_byte_set (struct memmap * memmap, uint64_t
     page.address = page_address;
 
     struct memmap_page * tree_page = tree_fetch(memmap->tree, &page);
-    if (tree_page == NULL) {
+    if ((tree_page == NULL) && (memmap->flags & MEMMAP_NOFAIL)) {
+        tree_page = memmap_page_create(page_address,
+                                       memmap->page_size,
+                                       MEMMAP_R | MEMMAP_W | MEMMAP_X);
+        tree_insert_(memmap->tree, tree_page);
+    }
+    else if (tree_page == NULL) {
         return 1;
     }
 

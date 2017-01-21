@@ -12,6 +12,8 @@
 #define MEMMAP_W 2
 #define MEMMAP_X 4
 
+#define MEMMAP_NOFAIL 1
+
 struct memmap_page {
     struct object_header oh;
     uint64_t address;
@@ -34,12 +36,15 @@ struct memmap {
     struct object_header oh;
     struct tree * tree;
     unsigned int page_size;
+    unsigned int flags;
 };
 
 
 struct memmap * memmap_create (unsigned int page_size);
 void            memmap_delete (struct memmap * memmap);
 struct memmap * memmap_copy   (const struct memmap * memmap);
+
+void memmap_set_flags (struct memmap * memmap, unsigned int flags);
 
 /**
 * Inserts the buf into the memmap at the given address with given permissions. If
