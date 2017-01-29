@@ -1285,6 +1285,11 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             mov_r_imm(bb, REG_RAX, 3, 64);
             ret(bb);
             break;
+        case BOP_HOOK :
+            mov_r_imm(bb, REG_RDI, (uint64_t) varstore, 64);
+            mov_r_imm(bb, REG_RAX, (uint64_t) bins->hook, 64);
+            call_r(bb, REG_RAX);
+            break;
         }
     }
     if (error) {

@@ -36,4 +36,14 @@ void *           list_it_data   (struct list_it * it);
 struct list_it * list_it_next   (struct list_it * it);
 struct list_it * list_it_remove (struct list * list, struct list_it * it);
 
+/**
+* Appends data so that it immediately follows the given iterator.
+* @param list Pointer to a list.
+* @param it Pointer to an iterator in list..
+* @param data The data to append.
+* @return 0 on success, non-zero on failure.
+*/
+int list_it_append_ (struct list * list, struct list_it * it, void * data);
+int list_it_append  (struct list * list, struct list_it * it, const void * data);
+
 #endif

@@ -176,3 +176,31 @@ struct list_it * list_it_remove (struct list * list, struct list_it * it) {
 
     return next;
 }
+
+
+int list_it_append_ (struct list * list, struct list_it * it, void * data) {
+    struct list_it * new_it = malloc(sizeof(struct list_it));
+    new_it->obj = data;
+    
+    /* new it's pointers */
+    new_it->prev = it;
+    new_it->next = it->next;
+
+    /* next it's pointers */
+    if (it->next != NULL)
+        it->next->prev = new_it;
+
+    /* prev it's pointers */
+    it->next = new_it;
+
+    /* list's pointers */
+    if (list->back == it)
+        list->back = new_it;
+
+    return 0;
+}
+
+
+int list_it_append (struct list * list, struct list_it * it, const void * data) {
+    return list_it_append_(list, it, OCOPY(data));
+}

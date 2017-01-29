@@ -45,6 +45,16 @@ int varstore_offset (const struct varstore * varstore,
                      size_t bits,
                      size_t * offset);
 
+/**
+* Retrieves a variable from the varstore, up to 64-bits in size, and places
+* it's value in the uint64_t pointed to by value.
+* @param varstore The varstore to retrieve this variable from.
+* @param identifier The string identifier of the variable.
+* @param bits The size of the variable in bits.
+* @param value A uint64_t to place the value in.
+* @return Returns 0 on success, or non-zero on failure, such as the variable is
+*         not found, or an invalid bits size was passed.
+*/
 int varstore_value (const struct varstore * varstore,
                     const char * identifier,
                     size_t bits,

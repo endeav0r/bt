@@ -30,6 +30,8 @@ enum {
 };
 
 struct platform {
+    /* Updates the program state, using varstore to access variables and the
+       memmap. Returns one of the status codes above. */
     int (* jit_hlt) (struct jit * jit, struct varstore * varstore);
 };
 
