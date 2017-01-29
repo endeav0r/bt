@@ -1,7 +1,7 @@
 OBJS=btlog.o object.o
 
 CFLAGS=-Wall -O2 -g
-LIB=arch/source/*.o arch/target/*.o bt/*.o container/*.o
+LIB=arch/*.o arch/source/*.o arch/target/*.o bt/*.o container/*.o platform/*.o
 INCLUDE=-I./
 
 all : $(OBJS)
@@ -9,6 +9,7 @@ all : $(OBJS)
 	make -C bt
 	make -C container
 	make -C loader
+	make -C platform
 	make -C test
 	$(CC) -o jit_example jit_example.c $(INCLUDE) $(OBJS) $(LIB) $(CFLAGS)
 	$(CC) -o jit_hsvm jit_hsvm.c $(INCLUDE) $(OBJS) $(LIB) $(CFLAGS)
@@ -21,6 +22,7 @@ clean :
 	make -C bt clean
 	make -C container clean
 	make -C loader clean
+	make -C platform clean
 	make -C test clean
 	rm -f jit_example
 	rm -f jit_hsvm
