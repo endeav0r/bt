@@ -21,7 +21,6 @@ void * object_copy (const void * obj) {
     struct object_header * oh = (struct object_header *) obj;
     struct object_header * copy = oh->vtable->copy(obj);
     if (oh->tags != NULL) {
-        ODEL(copy->tags);
         copy->tags = OCOPY(oh->tags);
     }
     return copy;

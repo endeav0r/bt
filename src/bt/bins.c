@@ -189,11 +189,9 @@ struct bins * bins_create_ (int op,
 
 
 void bins_delete (struct bins * bins) {
-    if (bins->op != BOP_CALL) {
-        if (bins->oper[0]) ODEL(bins->oper[0]);
-        if (bins->oper[1]) ODEL(bins->oper[1]);
-        if (bins->oper[2]) ODEL(bins->oper[2]);
-    }
+    if (bins->oper[0]) ODEL(bins->oper[0]);
+    if (bins->oper[1]) ODEL(bins->oper[1]);
+    if (bins->oper[2]) ODEL(bins->oper[2]);
 
     free(bins);
 }

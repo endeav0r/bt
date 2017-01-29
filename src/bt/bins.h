@@ -29,7 +29,6 @@ enum {
     BOP_LOAD,
 
     BOP_HLT,
-    BOP_CALL,
 
     BOP_COMMENT
 };
