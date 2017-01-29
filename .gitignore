@@ -1,4 +1,4 @@
-.debug
-.dSYM
-.o
-.debug
+*.debug
+*.dSYM
+*.o
+*.debug
