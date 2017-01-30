@@ -4,6 +4,11 @@ Binary Toolkit is my latest formal binary analysis framework. For the moment, I 
 
 Currently I am not targeting, "Real," architectures to bt.
 
+## Should I care?
+
+Not yet. If things work out well, I will begin Semantic Versioning. If you see
+an 0.1 release, that's the time to begin caring.
+
 ## One IR for everything
 
 BT's IR should be:

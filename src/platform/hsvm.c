@@ -2,13 +2,16 @@
 
 #include "arch/hsvm.h"
 #include "btlog.h"
+#include "bt/bins.h"
 #include "container/varstore.h"
 
 #include <unistd.h>
 
 
 const struct platform platform_hsvm = {
-    platform_hsvm_jit_hlt
+    platform_hsvm_jit_hlt,
+    platform_hsvm_hlt_tainted_bopers,
+    platform_hsvm_hlt_tainted_addresses
 };
 
 
@@ -57,4 +60,43 @@ int platform_hsvm_jit_hlt (struct jit * jit, struct varstore * varstore) {
     /* unhandled halt code */
     btlog("[%s] unhandled halt code", __func__);
     return PLATFORM_ERROR;
+}
+
+
+struct list * platform_hsvm_hlt_tainted_bopers (struct varstore * varstore) {
+    size_t offset;
+    int error = varstore_offset(varstore, "halt_code", 8, &offset);
+    if (error) {
+        btlog("[%s] error finding halt_code");
+        return NULL;
+    }
+
+    uint8_t * data_buf = (uint8_t *) varstore_data_buf(varstore);
+
+    /* handle the IN instruction */
+    if (data_buf[offset] == 1) {
+        varstore_offset(varstore, "in_reg", 8, &offset);
+        unsigned int reg_code = data_buf[offset];
+
+        struct list * list = list_create();
+        list_append_(list, boper_variable(16, hsvm_reg_string(reg_code)));
+
+        return list;
+    }
+
+    /* handle the OUT instruction */
+    if (data_buf[offset] == 2) {
+        /* Nothing is done as no variables are tainted */
+    }
+
+    return NULL;
+}
+
+
+struct list * platform_hsvm_hlt_tainted_addresses (struct varstore * varstore) {
+    /*
+    * In all cases, NULL is returned.
+    * HSVM system calls are not currently supported.
+    */
+    return NULL;
 }
