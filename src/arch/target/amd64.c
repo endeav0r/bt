@@ -75,7 +75,6 @@ enum {
     OP_SUB_RM_R,
     OP_XOR_RM_R,
     OP_MOV_RM_R_RM_R,
-    OP_MOV_RM_R_R_RM,
 };
 
 struct op_byte op_rm_r_bytes [] = {
@@ -85,7 +84,6 @@ struct op_byte op_rm_r_bytes [] = {
     {0x28, 0x29}, // sub
     {0x30, 0x31}, // xor
     {0x88, 0x89}, // mov rm r
-    {0x8a, 0x8b}  // mov r rm
 };
 
 int op_rm_r (struct byte_buf * bb,
@@ -576,7 +574,37 @@ int mov_r_rm (struct byte_buf * bb,
               unsigned int rm,
               uint32_t off32,
               unsigned int bits) {
-    return op_rm_r(bb, OP_MOV_RM_R_R_RM, rm, off32, r, bits);
+    switch (bits) {
+    case 1 : {
+        mov_r_rm(bb, r, rm, off32, 8);
+        and_r_imm(bb, r, 1, 8);
+        return 0;
+    }
+    case 8 :
+        byte_buf_append(bb, 0x8a);
+        byte_buf_append(bb, 0x80 | (r << 3) | rm);
+        byte_buf_append_le32(bb, off32);
+        return 0;
+    case 16 :
+        byte_buf_append(bb, 0x66);
+        byte_buf_append(bb, 0x8b);
+        byte_buf_append(bb, 0x80 | (r << 3) | rm);
+        byte_buf_append_le32(bb, off32);
+        return 0;
+    case 32 :
+        byte_buf_append(bb, 0x8b);
+        byte_buf_append(bb, 0x80 | (r << 3) | rm);
+        byte_buf_append_le32(bb, off32);
+        return 0;
+    case 64 : {
+        byte_buf_append(bb, 0x48);
+        byte_buf_append(bb, 0x8b);
+        byte_buf_append(bb, 0x80 | (r << 3) | rm);
+        byte_buf_append_le32(bb, off32);
+        return 0;
+    }
+    }
+    return -1;
 }
 
 
