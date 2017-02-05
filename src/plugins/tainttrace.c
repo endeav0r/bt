@@ -101,7 +101,7 @@ const struct object_vtable tt_mem_vtable = {
 
 struct tt_mem * tt_mem_create (uint64_t address) {
     struct tt_mem * ttm = malloc(sizeof(struct tt_mem));
-    object_init(ttm, &tt_mem_vtable);
+    object_init(&(ttm->oh), &tt_mem_vtable);
     ttm->address = address;
     return ttm;
 }
@@ -320,8 +320,7 @@ int tt_address_tainted (uint64_t address) {
 
 int tt_address_taint (uint64_t address) {
     struct tt_mem * ttm = tt_mem_create(address);
-    if (tree_insert_(tt->addresses, ttm))
-        ODEL(ttm);
+    tree_insert_(tt->addresses, ttm);
     return 0;
 }
 
