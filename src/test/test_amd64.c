@@ -639,7 +639,7 @@ int test_cmpltu_ (struct arithmetic_operands * ao) {
         return -1;
     }
     else if (ao->result16 != ao->l16 < ao->r16 ? 1 : 0) {
-        printf("cmpltu16 (0x%04x = 0x%04x < 0x%04x)\n",
+        printf("cmpltu 16 (0x%04x = 0x%04x < 0x%04x)\n",
                ao->result16, ao->l16, ao->r16);
         return -1;
     }
@@ -717,7 +717,7 @@ int test_cmplts_ (struct arithmetic_operands * ao) {
         return -1;
     }
     else if (ao->result16 != (int16_t) ao->l16 < (int16_t) ao->r16 ? 1 : 0) {
-        printf("cmplts16 (0x%04x = 0x%04x < 0x%04x)\n",
+        printf("cmplts 16 (0x%04x = 0x%04x < 0x%04x)\n",
                ao->result16, ao->l16, ao->r16);
         return -1;
     }
@@ -786,6 +786,161 @@ int test_cmplts () {
 }
 
 
+int test_cmpleu_ (struct arithmetic_operands * ao) {
+    test_comparison(ao, &bins_cmpleu_);
+
+    if (ao->result8 != ao->l8 <= ao->r8 ? 1 : 0) {
+        printf("cmpleu 8 (0x%02x = 0x%02x <= 0x%02x)\n",
+               ao->result8, ao->l8, ao->r8);
+        return -1;
+    }
+    else if (ao->result16 != ao->l16 <= ao->r16 ? 1 : 0) {
+        printf("cmpleu 16 (0x%04x = 0x%04x <= 0x%04x)\n",
+               ao->result16, ao->l16, ao->r16);
+        return -1;
+    }
+    else if (ao->result32 != ao->l32 <= ao->r32 ? 1 : 0) {
+        printf("cmpleu 32 (0x%08x = 0x%08x <= 0x%08x)\n",
+               ao->result32, ao->l32, ao->r32);
+        return -1;
+    }
+    else if (ao->result64 != ao->l64 <= ao->r64 ? 1 : 0) {
+        printf("cmpleu 64 (0x%016llx = 0x%016llx <= 0x%016llx)\n",
+               ao->result64, ao->l64, ao->r64);
+        return -1;
+    }
+
+    return 0;
+}
+
+
+int test_cmpleu () {
+    struct arithmetic_operands ao;
+
+    ao.l8 = 0x12;
+    ao.r8 = 0x12;
+    ao.l16 = 0x1234;
+    ao.r16 = 0x1234;
+    ao.l32 = 0x12345678;
+    ao.r32 = 0x12345678;
+    ao.l64 = 0x0123456789abcdef;
+    ao.r64 = 0x0123456789abcdef;
+
+    if (test_cmpleu_(&ao))
+        return -1;
+
+    ao.l8 = 0x12;
+    ao.r8 = 0x13;
+    ao.l16 = 0x1234;
+    ao.r16 = 0x1235;
+    ao.l32 = 0x12345678;
+    ao.r32 = 0x12345679;
+    ao.l64 = 0x0123456789abcdef;
+    ao.r64 = 0x0123456789abcdf0;
+
+    if (test_cmpleu_(&ao))
+        return -1;
+
+    ao.l8 = 0x13;
+    ao.r8 = 0x12;
+    ao.l16 = 0x1235;
+    ao.r16 = 0x1234;
+    ao.l32 = 0x12345679;
+    ao.r32 = 0x12345678;
+    ao.l64 = 0x0123456789abcdf0;
+    ao.r64 = 0x0123456789abcdef;
+
+    if (test_cmpleu_(&ao))
+        return -1;
+
+    unsigned i;
+    for (i = 0; i < TEST_ITERATIONS; i++) {
+        arithmetic_operands_random(&ao);
+        if (test_cmpleu_(&ao))
+            return -1;
+    }
+
+    return 0;
+}
+
+
+int test_cmples_ (struct arithmetic_operands * ao) {
+    test_comparison(ao, &bins_cmples_);
+
+    if (ao->result8 != (int8_t) ao->l8 <= (int8_t) ao->r8 ? 1 : 0) {
+        printf("cmples 8 (0x%02x = 0x%02x < 0x%02x)\n",
+               ao->result8, ao->l8, ao->r8);
+        return -1;
+    }
+    else if (ao->result16 != (int16_t) ao->l16 <= (int16_t) ao->r16 ? 1 : 0) {
+        printf("cmples 16 (0x%04x = 0x%04x <= 0x%04x)\n",
+               ao->result16, ao->l16, ao->r16);
+        return -1;
+    }
+    else if (ao->result32 != (int32_t) ao->l32 <= (int32_t) ao->r32 ? 1 : 0) {
+        printf("cmples 32 (0x%08x = 0x%08x <= 0x%08x)\n",
+               ao->result32, ao->l32, ao->r32);
+        return -1;
+    }
+    else if (ao->result64 != (int64_t) ao->l64 <= (int64_t) ao->r64 ? 1 : 0) {
+        printf("cmples 64 (0x%016llx = 0x%016llx <= 0x%016llx)\n",
+               ao->result64, ao->l64, ao->r64);
+        return -1;
+    }
+
+    return 0;
+}
+
+
+int test_cmples () {
+    struct arithmetic_operands ao;
+
+    ao.l8 = 0x12;
+    ao.r8 = 0x12;
+    ao.l16 = 0x1234;
+    ao.r16 = 0x1234;
+    ao.l32 = 0x12345678;
+    ao.r32 = 0x12345678;
+    ao.l64 = 0x0123456789abcdef;
+    ao.r64 = 0x0123456789abcdef;
+
+    if (test_cmples_(&ao))
+        return -1;
+
+    ao.l8 = 0xf2;
+    ao.r8 = 0xf3;
+    ao.l16 = 0xf234;
+    ao.r16 = 0xf235;
+    ao.l32 = 0xf2345678;
+    ao.r32 = 0xf2345679;
+    ao.l64 = 0xf123456789abcdef;
+    ao.r64 = 0xf123456789abcdf0;
+
+    if (test_cmples_(&ao))
+        return -1;
+
+    ao.l8 = 0xf3;
+    ao.r8 = 0xf2;
+    ao.l16 = 0xf235;
+    ao.r16 = 0xf234;
+    ao.l32 = 0xf2345679;
+    ao.r32 = 0xf2345678;
+    ao.l64 = 0xf123456789abcdf0;
+    ao.r64 = 0xf123456789abcdef;
+
+    if (test_cmples_(&ao))
+        return -1;
+
+    unsigned i;
+    for (i = 0; i < TEST_ITERATIONS; i++) {
+        arithmetic_operands_random(&ao);
+        if (test_cmples_(&ao))
+            return -1;
+    }
+
+    return 0;
+}
+
 
 int main (int argc, char * argv[]) {
     mmap_mem = mmap(0, 4096 * 16, PROT_READ | PROT_WRITE | PROT_EXEC,
@@ -852,6 +1007,16 @@ int main (int argc, char * argv[]) {
     }
     else if (test_cmplts()) {
         printf("error in test_cmplts()\n");
+        dump_mmap_mem();
+        return -1;
+    }
+    else if (test_cmpleu()) {
+        printf("error in test_cmpleu()\n");
+        dump_mmap_mem();
+        return -1;
+    }
+    else if (test_cmples()) {
+        printf("error in test_cmples()\n");
         dump_mmap_mem();
         return -1;
     }
