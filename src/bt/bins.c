@@ -14,6 +14,7 @@ const struct bins_string bins_strings [] = {
     {BOP_SUB,   "sub"},
     {BOP_UMUL,  "umul"},
     {BOP_UDIV,  "udiv"},
+    {BOP_UMOD,  "umod"},
     {BOP_AND,   "and"},
     {BOP_OR,    "or"},
     {BOP_XOR,   "xor"},
@@ -168,6 +169,7 @@ struct bins * bins_create (int op,
         bins->oper[2] = OCOPY(oper2);
     else
         bins->oper[2] = NULL;
+    bins->hook = NULL;
     return bins;
 }
 
@@ -184,6 +186,7 @@ struct bins * bins_create_ (int op,
     bins->oper[0] = oper0;
     bins->oper[1] = oper1;
     bins->oper[2] = oper2;
+    bins->hook = NULL;
 
     return bins;
 }
@@ -199,7 +202,10 @@ void bins_delete (struct bins * bins) {
 
 
 struct bins * bins_copy (const struct bins * bins) {
-    return bins_create(bins->op, bins->oper[0], bins->oper[1], bins->oper[2]);
+    struct bins * copy;
+    copy = bins_create(bins->op, bins->oper[0], bins->oper[1], bins->oper[2]);
+    copy->hook = bins->hook;
+    return copy;
 }
 
 
@@ -223,6 +229,7 @@ char * bins_string (const struct bins * bins) {
     case BOP_SUB :
     case BOP_UMUL :
     case BOP_UDIV :
+    case BOP_UMOD :
     case BOP_AND :
     case BOP_OR :
     case BOP_XOR :
@@ -263,6 +270,9 @@ char * bins_string (const struct bins * bins) {
         break;
     case BOP_COMMENT :
         s = strdup("comment");
+        break;
+    case BOP_HOOK :
+        s = strdup("hook");
         break;
     }
 
@@ -322,4 +332,11 @@ struct bins * bins_hlt () {
 
 struct bins * bins_comment () {
     return bins_create(BOP_COMMENT, NULL, NULL, NULL);
+}
+
+
+struct bins * bins_hook (void (* hook) (void *)) {
+    struct bins * bins = bins_create(BOP_HOOK, NULL, NULL, NULL);
+    bins->hook = hook;
+    return bins;
 }

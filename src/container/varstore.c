@@ -170,7 +170,7 @@ int varstore_value (const struct varstore * varstore,
         *value = *((uint32_t *) &(varstore->data_buf[vn->offset]));
         break;
     case 64 :
-        *value = *((uint32_t *) &(varstore->data_buf[vn->offset]));
+        *value = *((uint64_t *) &(varstore->data_buf[vn->offset]));
         break;
     return -1;
     }

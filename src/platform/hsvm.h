@@ -5,6 +5,8 @@
 
 extern const struct platform platform_hsvm;
 
+/* see platform.h for a description of what these functions do. */
+
 int platform_hsvm_jit_hlt (struct jit * jit, struct varstore * varstore);
 struct list * platform_hsvm_hlt_tainted_bopers (struct varstore * varstore);
 struct list * platform_hsvm_hlt_tainted_addresses (struct varstore * varstore);

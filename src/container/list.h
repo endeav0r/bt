@@ -46,4 +46,7 @@ struct list_it * list_it_remove (struct list * list, struct list_it * it);
 int list_it_append_ (struct list * list, struct list_it * it, void * data);
 int list_it_append  (struct list * list, struct list_it * it, const void * data);
 
+int list_it_prepend_ (struct list * list, struct list_it * it, void * data);
+int list_it_prepend  (struct list * list, struct list_it * it, const void * data);
+
 #endif

@@ -17,6 +17,7 @@ const struct platform platform_hsvm = {
 
 
 int platform_hsvm_jit_hlt (struct jit * jit, struct varstore * varstore) {
+    btlog("[platform_hsvm.jit_hlt]");
     size_t offset;
     int error = varstore_offset(varstore, "halt_code", 8, &offset);
     if (error) {
@@ -41,6 +42,8 @@ int platform_hsvm_jit_hlt (struct jit * jit, struct varstore * varstore) {
             return PLATFORM_ERROR;
         }
         *((uint16_t *) &(data_buf[offset])) = r;
+        btlog("[platform_hsvm.jit_hlt] IN %s = 0x%02x",
+              hsvm_reg_string(reg_code), r);
         return PLATFORM_HANDLED;
     }
 
@@ -54,6 +57,8 @@ int platform_hsvm_jit_hlt (struct jit * jit, struct varstore * varstore) {
             btlog("[%s] error writing reg out", __func__);
             return PLATFORM_ERROR;
         }
+        btlog("[platform_hsvm.jit_hlt] OUT %s = 0x%02x",
+              hsvm_reg_string(reg_code), r);
         return PLATFORM_HANDLED;
     }
 

@@ -1,7 +1,9 @@
 #include "amd64.h"
 
+#include "btlog.h"
 #include "container/memmap.h"
 
+#include <assert.h>
 #include <stdio.h>
 
 
@@ -406,6 +408,7 @@ int div_r64_r64 (struct byte_buf * bb, unsigned int lhs, unsigned int rhs) {
 
     // prepare
     mov_r_r(bb, REG_RAX, lhs, 64);
+    mov_r_imm(bb, REG_RDX, 0, 64);
 
     // execute
     byte_buf_append(bb, 0x48);
@@ -486,6 +489,7 @@ int mod_r64_r64 (struct byte_buf * bb, unsigned int lhs, unsigned int rhs) {
 
     // prepare
     mov_r_r(bb, REG_RAX, lhs, 64);
+    mov_r_imm(bb, REG_RDX, 0, 64);
 
     // execute
     byte_buf_append(bb, 0x48);
@@ -1123,7 +1127,7 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
                           boper_value(bins->oper[2]),
                           boper_bits(bins->oper[2]));
             else
-                amd64_load_r_boper(cmpop, varstore, REG_RCX, bins->oper[1]);
+                amd64_load_r_boper(cmpop, varstore, REG_RCX, bins->oper[2]);
 
             cmp_r_r(cmpop, REG_RAX, REG_RCX, boper_bits(bins->oper[1]));
 
@@ -1162,22 +1166,29 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             break;
         }
         case BOP_SEXT :
-            amd64_load_r_boper(bb, varstore, REG_RAX, bins->oper[1]);
-            movsx_r_r(bb,
-                      REG_RAX,
-                      boper_bits(bins->oper[0]),
-                      REG_RAX,
-                      boper_bits(bins->oper[1]));
-            amd64_store_boper_r(bb, varstore, bins->oper[0], REG_RAX);
+            if (amd64_load_r_boper(bb, varstore, REG_RAX, bins->oper[1]))
+                btlog("[amd64_assemble] BOP_SEXT amd64_load_r_boper error");
+            if (movsx_r_r(bb,
+                          REG_RAX,
+                          boper_bits(bins->oper[0]),
+                          REG_RAX,
+                          boper_bits(bins->oper[1])))
+                btlog("[amd64_assemble] BOP_SEXT movsx_r_r error");
+            if (amd64_store_boper_r(bb, varstore, bins->oper[0], REG_RAX))
+                btlog("[amd64_assemble] BOP_SEXT amd64_store_boper error");
             break;
         case BOP_ZEXT :
-            amd64_load_r_boper(bb, varstore, REG_RAX, bins->oper[1]);
-            movzx_r_r(bb,
-                      REG_RAX,
-                      boper_bits(bins->oper[0]),
-                      REG_RAX,
-                      boper_bits(bins->oper[1]));
-            amd64_store_boper_r(bb, varstore, bins->oper[0], REG_RAX);
+            btlog("[amd64_assemble] BOP_ZEXT");
+            if (amd64_load_r_boper(bb, varstore, REG_RAX, bins->oper[1]))
+                btlog("[amd64_assemble] ZEXT amd64_load_r_boper error");
+            if (movzx_r_r(bb,
+                          REG_RAX,
+                          boper_bits(bins->oper[0]),
+                          REG_RAX,
+                          boper_bits(bins->oper[1])))
+                btlog("[amd64_assemble] ZEXT movzx_r_r error");
+            if (amd64_store_boper_r(bb, varstore, bins->oper[0], REG_RAX))
+                btlog("[amd64_assemble] ZEXT amd64_store_boper");
             break;
         case BOP_TRUN :
             amd64_load_r_boper(bb, varstore, REG_RAX, bins->oper[1]);

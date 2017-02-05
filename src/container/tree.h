@@ -36,7 +36,7 @@ int    tree_insert  (struct tree * tree, const void * obj);
 /**
 * Inserts an object into the tree. This form of the function takes ownership of
 * the passed object. If a duplicate object already exists, the tree remains
-* unchanged, the passed object is NOT deleted, and -1 is returned.
+* unchanged, the passed object is deleted, and -1 is returned.
 *
 * @param tree The tree to insert the object into.
 * @param obj The object to insert into the tree.

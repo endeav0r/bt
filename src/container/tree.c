@@ -64,7 +64,12 @@ int tree_insert (struct tree * tree, const void * obj) {
 
 int tree_insert_ (struct tree * tree, void * obj) {
     int error = 0;
-    tree->nodes = tree_node_insert(tree->nodes, tree_node_create(obj), &error);
+    struct tree_node * tree_node = tree_node_create(obj);
+    tree->nodes = tree_node_insert(tree->nodes, tree_node, &error);
+    if (error) {
+        ODEL(tree_node->obj);
+        free(tree_node);
+    }
     return error;
 }
 

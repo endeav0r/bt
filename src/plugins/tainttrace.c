@@ -17,10 +17,13 @@
 #include "bt/jit.h"
 #include "container/list.h"
 #include "container/memmap.h"
+#include "container/tags.h"
 #include "container/tree.h"
+#include "container/uint64.h"
 #include "container/varstore.h"
-#include "hooks/hooks.h"
+#include "hooks.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -48,15 +51,15 @@ const struct object_vtable tt_var_vtable = {
 
 
 struct tt_var * tt_var_create (const char * identifier) {
-    struct tt_var * ttv = malloc(sizeof(struct ttv_var));
+    struct tt_var * ttv = malloc(sizeof(struct tt_var));
     object_init(ttv, &tt_var_vtable);
     ttv->identifier = strdup(identifier);
     return ttv;
 }
 
 
-void ttv_var_delete (struct tt_var * ttv) {
-    free(ttv->identifier);
+void tt_var_delete (struct tt_var * ttv) {
+    free((void *) ttv->identifier);
     free(ttv);
 }
 
@@ -84,7 +87,7 @@ struct tt_mem {
 
 struct tt_mem * tt_mem_create (uint64_t address);
 void            tt_mem_delete (struct tt_mem * ttm);
-struct tt_mem * tt_mem_copy   (const sturct tt_mem * ttm);
+struct tt_mem * tt_mem_copy   (const struct tt_mem * ttm);
 int             tt_mem_cmp    (const struct tt_mem * lhs,
                                const struct tt_mem * rhs);
 
@@ -96,7 +99,7 @@ const struct object_vtable tt_mem_vtable = {
 };
 
 
-struct tt_mem * tt_mem_create (const char * identifier) {
+struct tt_mem * tt_mem_create (uint64_t address) {
     struct tt_mem * ttm = malloc(sizeof(struct tt_mem));
     object_init(ttm, &tt_mem_vtable);
     ttm->address = address;
@@ -140,7 +143,7 @@ struct tt_bins {
 
 struct tt_bins * tt_bins_create (uint64_t identifier, struct bins * bins);
 void             tt_bins_delete (struct tt_bins * ttb);
-struct tt_bins * tt_bins_copy   (const sturct tt_bins * ttb);
+struct tt_bins * tt_bins_copy   (const struct tt_bins * ttb);
 int              tt_bins_cmp    (const struct tt_bins * lhs,
                                  const struct tt_bins * rhs);
 
@@ -152,7 +155,7 @@ const struct object_vtable tt_bins_vtable = {
 };
 
 
-struct tt_bins * tt_bins_create (uint64_t identifer, struct bins * bins) {
+struct tt_bins * tt_bins_create (uint64_t identifier, struct bins * bins) {
     struct tt_bins * ttb = malloc(sizeof(struct tt_bins));
     object_init(ttb, &tt_bins_vtable);
     ttb->identifier = identifier;
@@ -162,7 +165,7 @@ struct tt_bins * tt_bins_create (uint64_t identifer, struct bins * bins) {
 
 
 void tt_bins_delete (struct tt_bins * ttb) {
-    ODEL(ttb);
+    ODEL(ttb->bins);
     free(ttb);
 }
 
@@ -215,6 +218,7 @@ struct tt * tt = NULL;
 *******************************************************************************/
 
 int plugin_initialize () {
+    printf("[plugin_initialize]\n");
     tt = malloc(sizeof(struct tt));
     tt->variables = tree_create();
     tt->addresses = tree_create();
@@ -226,11 +230,13 @@ int plugin_initialize () {
 
 
 int plugin_cleanup () {
+    printf("[plugin_cleanup]\n");
     struct list_it * it;
-    for (it = list_it(tt->trace); it != NULL; it = list_it_next) {
+    btlog("[tainttrace.plugin_cleanup]");
+    for (it = list_it(tt->trace); it != NULL; it = list_it_next(it)) {
         struct bins * bins = list_it_data(it);
         char * bins_str = bins_string(bins);
-        btlog("[tainttrace] %s", bins_str);
+        printf("[tainttrace] %s\n", bins_str);
         free(bins_str);
     }
     ODEL(tt->variables);
@@ -241,14 +247,22 @@ int plugin_cleanup () {
     return 0;
 }
 
+int taint_trace_jit_startup (struct jit * jit,
+                             struct varstore * varstore,
+                             struct memmap * memmap);
 int taint_trace_jit_translate (struct jit * jit,
                                struct varstore * varstore,
                                struct memmap * memmap,
                                struct list * binslist);
+int taint_trace_jit_cleanup (struct jit * jit,
+                             struct varstore * varstore,
+                             struct memmap * memmap);
 
 
 const struct hooks_api taint_trace_hooks = {
-    taint_trace_jit_translate
+    taint_trace_jit_startup,
+    taint_trace_jit_translate,
+    taint_trace_jit_cleanup
 };
 
 
@@ -281,8 +295,7 @@ int tt_boper_tainted (const struct boper * boper) {
 
 int tt_boper_taint (const struct boper * boper) {
     struct tt_var * ttv = tt_var_create(boper_identifier(boper));
-    if (tree_insert_(tt->variables, ttv))
-        ODEL(ttv);
+    tree_insert_(tt->variables, ttv);
     return 0;
 }
 
@@ -326,24 +339,18 @@ int tt_boper_value (struct varstore * varstore,
                     uint64_t * address) {
     switch (boper_bits(boper)) {
     case 8 : {
-        uint8_t u8;
-        if (varstore_value(varstore, boper_identifier(boper), 8, &u8))
+        if (varstore_value(varstore, boper_identifier(boper), 8, address))
             return -1;
-        *address = u8;
         return 0;
     }
     case 16 : {
-        uint16_t u16;
-        if (varstore_value(varstore, boper_identifier(boper), 16, &u16))
+        if (varstore_value(varstore, boper_identifier(boper), 16, address))
             return -1;
-        *address = u16;
         return 0;
     }
     case 32 : {
-        uint32_t u32;
-        if (varstore_value(varstore, boper_identifier(boper), 32, &u32))
+        if (varstore_value(varstore, boper_identifier(boper), 32, address))
             return -1;
-        *address = u32;
         return 0;
     }
     case 64 : {
@@ -371,9 +378,9 @@ struct tt_bins * tt_hook_get_tt_bins (struct varstore * varstore) {
     /* Retrieve the instruction associated with this hook. */
     struct tt_bins tt_bins_needle;
     object_init(&tt_bins_needle, &tt_bins_vtable);
-    tt_bins_needle->identiifier = tt_bins_identifier;
+    tt_bins_needle.identifier = tt_bins_identifier;
     struct tt_bins * tt_bins = tree_fetch(tt->bins, &tt_bins_needle);
-    if (bins == NULL) {
+    if (tt_bins == NULL) {
         btlog("[-] Could not find tt_bins for 0x%llx",
               (unsigned long long) tt_bins_identifier);
         return NULL;
@@ -473,6 +480,7 @@ void tt_arithmetic_hook (struct varstore * varstore) {
             else
                 tags_set_uint64(tags, "oper_2_value", value);
         }
+
         list_append_(tt->trace, logbins);
     }
 
@@ -480,7 +488,7 @@ void tt_arithmetic_hook (struct varstore * varstore) {
     if (tainted)
         tt_boper_taint(bins->oper[0]);
     else
-        tt_boper_untaint(biner->oper[0]);
+        tt_boper_untaint(bins->oper[0]);
 }
 
 
@@ -499,7 +507,7 @@ void tt_comparison_hook (struct varstore * varstore) {
          || (tt_boper_tainted(bins->oper[2])))
         tt_boper_taint(bins->oper[0]);
     else
-        tt_boper_untaint(bins->oper[1]);
+        tt_boper_untaint(bins->oper[0]);
 }
 
 
@@ -514,11 +522,10 @@ void tt_extension_hook (struct varstore * varstore) {
     * If the variable being extended or truncated is tainted, then the result
     * is tainted as well.
     */
-    if (    (tt_boper_tainted(bins->oper[1]))
-         || (tt_boper_tainted(bins->oper[2])))
+    if (tt_boper_tainted(bins->oper[1]))
         tt_boper_taint(bins->oper[0]);
     else
-        tt_boper_untaint(bins->oper[1]);
+        tt_boper_untaint(bins->oper[0]);
 }
 
 
@@ -582,15 +589,64 @@ void tt_load_hook (struct varstore * varstore) {
 }
 
 
+void tt_hlt_hook (struct varstore * varstore) {
+    /* Fetch the jit pointer we saved in taint_trace_jit_startup */
+    uint64_t jit_u64;
+    int error = varstore_value(varstore, "__JIT__", 64, &jit_u64);
+    if (error) {
+        btlog("[-] error fetching address for jit");
+        return;
+    }
+    struct jit * jit = (struct jit *) jit_u64;
+
+    /* Use the jit's platform pointer to get a list of tainted bopers */
+    struct list * tainted_bopers = jit->platform->hlt_tainted_bopers(varstore);
+    if (tainted_bopers != NULL) {
+        struct list_it * it;
+        for (it = list_it(tainted_bopers); it != NULL; it = list_it_next(it)) {
+            struct boper * boper = list_it_data(it);
+            tt_boper_taint(boper);
+        }
+        ODEL(tainted_bopers);
+    }
+
+    /* Use the jit's platform pointer to get a list of tainted addresses */
+    struct list * tainted_addresses;
+    tainted_addresses = jit->platform->hlt_tainted_addresses(varstore);
+    if (tainted_addresses != NULL) {
+        struct list_it * it;
+        for (it = list_it(tainted_addresses); it != NULL; it = list_it_next(it)) {
+            struct uint64 * uint64 = list_it_data(it);
+            tt_address_taint(uint64->value);
+        }
+        ODEL(tainted_addresses);
+    }
+}
+
+
 /*******************************************************************************
-* This begins the real meat of the plugin
+* This is the code for all of our hooks
 *******************************************************************************/
+int taint_trace_jit_startup (struct jit * jit,
+                             struct varstore * varstore,
+                             struct memmap * memmap) {
+    /* Ensure we maintain a pointer back to this jit. This is a bit less-pure
+       than I would like. */
+    size_t offset = varstore_offset_create(varstore, "__JIT__", 64);
+    uint8_t * u8buf = varstore_data_buf(varstore);
+    /* Talk about some array-indexing pointer stuff */
+    *((uint64_t *) &(u8buf[offset])) = (uint64_t *) jit;
+
+    return 0;
+}
+
+
 int taint_trace_jit_translate (struct jit * jit,
                                struct varstore * varstore,
-                               struct memmap * memmap
+                               struct memmap * memmap,
                                struct list * binslist) {
     struct list_it * it = NULL;
-    for (it = list_it(binslist); it != NULL; it = list_it_next) {
+    for (it = list_it(binslist); it != NULL; it = list_it_next(it)) {
         struct bins * bins = list_it_data(it);
         void (* function_ptr) (void *) = NULL;
         switch (bins->op) {
@@ -621,14 +677,17 @@ int taint_trace_jit_translate (struct jit * jit,
         case BOP_STORE :
             if (function_ptr == NULL)
                 function_ptr = (void (*) (void *)) tt_store_hook;
-        case BOP_LOAD : {
+        case BOP_LOAD :
             if (function_ptr == NULL)
                 function_ptr = (void (*) (void *)) tt_load_hook;
+        case BOP_HLT : {
+            if (function_ptr == NULL)
+                function_ptr = (void (*) (void *)) tt_hlt_hook;
             /*
             * Create a tt_bins and add it to tt->bins to track this bins.
             */
-            struct tt_bins * ttb = tt_bins_create(tt->identifier++, bins);
-            tree_insert(tt->bins, ttb);
+            struct tt_bins * ttb = tt_bins_create(tt->tt_bins_identifier++, bins);
+            tree_insert_(tt->bins, ttb);
             /*
             * Create a bins which sets a variable "tt_bins_identifier" to the
             * identifier for this tt_bins.
@@ -641,18 +700,25 @@ int taint_trace_jit_translate (struct jit * jit,
             * Inject this instruction into our bins list and advance our
             * iterator.
             */
-            list_it_append_(binslist, it, ttb_bins);
-            it = list_it_next(it);
+            list_it_prepend_(binslist, it, ttb_bins);
             /*
             * Inject a hook into our list bins which calls tt_arithmetic_hook,
             * and advance the iterator.
             */
-            struct bins * hook_bins;
-            hook_bins = bins_hook(function_ptr);
-            list_it_append(binslist, it, hook_bins);
-            it = list_it_next;
+            struct bins * hook_bins = bins_hook(function_ptr);
+            list_it_prepend_(binslist, it, hook_bins);
             break;
         }
         }
     }
+    return 0;
+}
+
+
+
+int taint_trace_jit_cleanup (struct jit * jit,
+                             struct varstore * varstore,
+                             struct memmap * memmap) {
+    /* nothing to do */
+    return 0;
 }

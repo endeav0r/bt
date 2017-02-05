@@ -8,10 +8,10 @@ all : $(OBJS)
 	make -C target
 
 %.o : %.c %.h
-	$(CC) -c -o $@ $< $(INCLUDE) $(CFLAGS)
+	$(CC) -fPIC -c -o $@ $< $(INCLUDE) $(CFLAGS)
 
 %.o : %.c
-	$(CC) -c -o $@ $< $(INCLUDE) $(CFLAGS)
+	$(CC) -fPIC -c -o $@ $< $(INCLUDE) $(CFLAGS)
 
 clean :
 	make -C source clean

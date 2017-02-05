@@ -1,4 +1,4 @@
-OBJS=hsvm.o 
+OBJS=hsvm.o
 
 CFLAGS=-Wall -O2 -g
 INCLUDE=-I../../
@@ -6,7 +6,7 @@ INCLUDE=-I../../
 all : $(OBJS)
 
 %.o : %.c
-	$(CC) -c $< -o $@ $(INCLUDE) $(CFLAGS)
+	$(CC) -fPIC -c $< -o $@ $(INCLUDE) $(CFLAGS)
 
 clean :
 	rm -f *.o

@@ -60,7 +60,7 @@ void btlog (const char * format, ...) {
     va_list args;
     va_start(args, format);
     // vasprintf support is a pain
-    size_t str_size = 64;
+    size_t str_size = 256;
     char * str = malloc(str_size);
     do {
         size_t sprintf_chars = vsnprintf(str, str_size, format, args);
