@@ -1,7 +1,7 @@
-OBJS=hsvm.o
+OBJS=hsvm.o mips.o
 
 CFLAGS=-Wall -O2 -g
-INCLUDE=-I../../
+INCLUDE=-I../../ -I/usr/local/include
 
 all : $(OBJS)
 
