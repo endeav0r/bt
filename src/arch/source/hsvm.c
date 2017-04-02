@@ -294,7 +294,11 @@ struct list * hsvm_out (uint8_t reg) {
 }
 
 
-struct list * hsvm_translate_ins (const void * buf, size_t size) {
+struct list * hsvm_translate_ins (
+    const void * buf,
+    size_t size,
+    uint64_t address
+) {
     const uint8_t * u8buf = (const uint8_t *) buf;
 
     if (size < 1)
@@ -642,13 +646,21 @@ struct list * hsvm_translate_ins (const void * buf, size_t size) {
 }
 
 
-struct list * hsvm_translate_block (const void * buf, size_t size) {
+struct list * hsvm_translate_block (
+    const void * buf,
+    size_t size,
+    uint64_t address
+) {
     const uint8_t * u8buf = (const uint8_t *) buf;
 
     struct list * list = list_create();
     size_t offset;
     for (offset = 0; offset < size; offset += 4) {
-        struct list * ins_list = hsvm_translate_ins(&(u8buf[offset]), size - offset);
+        struct list * ins_list = hsvm_translate_ins(
+            &(u8buf[offset]),
+            size - offset,
+            address + offset
+        );
         if (ins_list == NULL) {
             ODEL(list);
             return NULL;

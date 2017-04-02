@@ -177,7 +177,8 @@ int jit_execute (struct jit * jit,
             binslist = jit->arch_source->translate_block(buf_get(buf,
                                                                  0,
                                                                  buf_length(buf)),
-                                                         buf_length(buf));
+                                                         buf_length(buf),
+                                                         ip);
 
             ODEL(buf);
 

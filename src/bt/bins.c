@@ -30,6 +30,7 @@ const struct bins_string bins_strings [] = {
     {BOP_TRUN,   "trun"},
     {BOP_STORE,  "store"},
     {BOP_LOAD,   "load"},
+    {BOP_CE,     "ce"},
     {BOP_HLT,    "hlt"},
     {BOP_COMMENT, "comment"},
     {BOP_HOOK,    "hook"},
@@ -255,7 +256,8 @@ char * bins_string (const struct bins * bins) {
     case BOP_ZEXT :
     case BOP_TRUN :
     case BOP_STORE :
-    case BOP_LOAD : {
+    case BOP_LOAD :
+    case BOP_CE: {
         s = malloc(128);
         char * o0str = boper_string(bins->oper[0]);
         char * o1str = boper_string(bins->oper[1]);
@@ -323,6 +325,7 @@ BINS_2OP_DEF(zext, ZEXT)
 BINS_2OP_DEF(trun, TRUN)
 BINS_2OP_DEF(store, STORE)
 BINS_2OP_DEF(load, LOAD)
+BINS_2OP_DEF(ce, CE)
 
 
 struct bins * bins_hlt () {
@@ -339,4 +342,70 @@ struct bins * bins_hook (void (* hook) (void *)) {
     struct bins * bins = bins_create(BOP_HOOK, NULL, NULL, NULL);
     bins->hook = hook;
     return bins;
+}
+
+
+
+struct list * bins_ror (const struct boper * dst,
+                        const struct boper * operand,
+                        const struct boper * bits) {
+    return bins_ror_(OCOPY(dst), OCOPY(operand), OCOPY(bits));
+}
+
+
+struct list * bins_ror_ (struct boper * dst,
+                         struct boper * operand,
+                         struct boper * bits) {
+    struct list * list = list_create();
+
+    unsigned int bit_width = boper_bits(dst);
+
+    list_append_(list, bins_sub_(boper_variable(bit_width, "ror_TMP_BITS"),
+                                 boper_constant(bit_width, bit_width),
+                                 OCOPY(bits)));
+    list_append_(list, bins_shl_(boper_variable(bit_width, "ror_TMP"),
+                                 OCOPY(operand),
+                                 boper_variable(bit_width, "ror_TMP_BITS")));
+    list_append_(list, bins_shr_(OCOPY(dst), operand, bits));
+    list_append_(list, bins_or_(OCOPY(dst),
+                                dst,
+                                boper_variable(bit_width, "ror_TMP")));
+
+    return list;
+}
+
+
+struct list * bins_asr (const struct boper * dst,
+                        const struct boper * operand,
+                        const struct boper * bits) {
+    return bins_asr_(OCOPY(dst), OCOPY(operand), OCOPY(bits));
+}
+
+
+struct list * bins_asr_ (struct boper * dst,
+                         struct boper * operand,
+                         struct boper * bits) {
+    struct list * list = list_create();
+
+    unsigned int bit_width = boper_bits(dst);
+
+    list_append_(list, bins_shr_(boper_variable(bit_width, "asr_MASK_BIT"),
+                                 OCOPY(operand),
+                                 boper_constant(bit_width, bit_width - 1)));
+    list_append_(list, bins_sub_(boper_variable(bit_width, "asr_MASK_SIZE"),
+                                 boper_constant(bit_width, bit_width),
+                                 OCOPY(bits)));
+    list_append_(list, bins_shl_(boper_variable(bit_width, "asr_MASK"),
+                                 boper_constant(bit_width, -1),
+                                 boper_variable(bit_width, "asr_MASK_SIZE")));
+    list_append_(list, bins_umul_(boper_variable(bit_width, "asr_MASK"),
+                                  boper_variable(bit_width, "asr_MASK"),
+                                  boper_variable(bit_width, "asr_MASK_BIT")));
+
+    list_append_(list, bins_shr_(OCOPY(dst), operand, bits));
+    list_append_(list, bins_or_(OCOPY(dst),
+                                dst,
+                                boper_variable(bit_width, "asr_MASK")));
+
+    return list;
 }

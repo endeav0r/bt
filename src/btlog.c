@@ -89,6 +89,42 @@ void btlog (const char * format, ...) {
 }
 
 
+void btlog_error (const char * format, ...) {
+    va_list args;
+    va_start(args, format);
+    // vasprintf support is a pain
+    size_t str_size = 256;
+    char * str = malloc(str_size);
+    do {
+        size_t sprintf_chars = vsnprintf(str, str_size, format, args);
+        if (sprintf_chars >= str_size - 1) {
+            free(str);
+            str_size *= 2;
+            str = malloc(str_size);
+        }
+        else
+            break;
+    } while(1);
+    va_end(args);
+
+    if (btlog_fh != NULL) {
+        fprintf(btlog_fh, "%s\n", str);
+        fflush(btlog_fh);
+    }
+    else {
+        if (btlog_list == NULL)
+            btlog_list = list_create();
+
+        list_append_(btlog_list, btlog_object_create(str));
+    }
+
+    printf("\e[31m%s\e[39m\n", str);
+    fflush(stdout);
+
+    free(str);
+}
+
+
 void write_btlog (const char * filename) {
     FILE * fh = fopen(filename, "wb");
 

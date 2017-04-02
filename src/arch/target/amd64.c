@@ -1010,16 +1010,14 @@ int amd64_store_boper_imm (struct byte_buf * bb,
 }
 
 
-struct byte_buf * amd64_assemble (struct list * btins_list,
-                                  struct varstore * varstore) {
+struct byte_buf * amd64_assemble_bins (
+    struct bins * bins,
+    struct varstore * varstore
+) {
     int error = 0;
-
     struct byte_buf * bb = byte_buf_create();
-    struct list_it * it;
-    for (it = list_it(btins_list); it != NULL; it = list_it_next(it)) {
-        struct bins * bins = list_it_data(it);
 
-        switch (bins->op) {
+    switch (bins->op) {
         // arithmetic instructions that operate directly against rm
         case BOP_ADD :
         case BOP_SUB :
@@ -1329,7 +1327,58 @@ struct byte_buf * amd64_assemble (struct list * btins_list,
             mov_r_imm(bb, REG_RAX, (uint64_t) bins->hook, 64);
             call_r(bb, REG_RAX);
             break;
+    }
+
+    if (error) {
+        ODEL(bb);
+        return NULL;
+    }
+
+    return bb;
+}
+
+
+struct byte_buf * amd64_assemble (struct list * btins_list,
+                                  struct varstore * varstore) {
+    int error = 0;
+
+    struct byte_buf * bb = byte_buf_create();
+    struct list_it * it;
+    for (it = list_it(btins_list); it != NULL; it = list_it_next(it)) {
+        struct bins * bins = list_it_data(it);
+
+        if (bins->op == BOP_CE) {
+            struct list * ce_btins_list;
+            
+            struct list_it * be_btins_first = list_it_next(it);
+            struct list_it * be_btins_last = be_btins_first;
+
+            unsigned int ins_n = boper_value(bins->oper[1]);
+            while (ins_n--) {
+                be_btins_last = list_it_next(be_btins_last);
+            }
+
+            ce_btins_list = list_slice(btins_list, it, be_btins_last);
+            struct byte_buf * bb_ce = amd64_assemble(ce_btins_list, varstore);
+            ODEL(ce_btins_list);
+
+            amd64_load_r_boper(bb, varstore, REG_RAX, bins->oper[0]);
+            cmp_r_imm(bb, REG_RAX, 0, 0);
+            jcc(bb, JCC_JE, byte_buf_length(bb_ce));
+
+            byte_buf_append_byte_buf(bb, bb_ce);
+            ODEL(bb_ce);
         }
+        else {
+            struct byte_buf * bins_bb = amd64_assemble_bins(bins, varstore);
+            if (bins_bb == NULL) {
+                error = -1;
+                break;
+            }
+            byte_buf_append_byte_buf(bb, bins_bb);
+            ODEL(bins_bb);
+        }
+
     }
     if (error) {
         ODEL(bb);

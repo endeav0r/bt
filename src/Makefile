@@ -8,7 +8,7 @@ LIB=arch/*.o \
 	container/*.o \
 	platform/*.o \
 	plugins/*.o \
-	-ldl
+	-ldl -lcapstone
 INCLUDE=-I./
 
 all : $(OBJS)

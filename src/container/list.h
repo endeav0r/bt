@@ -31,6 +31,24 @@ void * list_back         (struct list * list);
 void   list_pop_front    (struct list * list);
 void   list_pop_back     (struct list * list);
 
+unsigned int list_length (const struct list * list);
+
+/**
+* Takes an iterator to the first element of a slice, the last element of a
+* slice, and returns a new list from first to last inclusive.
+* @param list the list we will create our sliced list from.
+* @param first An iterator to the first element, or NULL if we should begin from
+*        the beginning of the list.
+* @param last An iterator to the last element, or NULL if we should go to the
+*        last element of the list.
+* @return A new list, with a deep copy of all elements from first to last.
+*/
+struct list * list_slice (
+    struct list * list,
+    struct list_it * first,
+    struct list_it * last
+);
+
 struct list_it * list_it        (struct list * list);
 void *           list_it_data   (struct list_it * it);
 struct list_it * list_it_next   (struct list_it * it);

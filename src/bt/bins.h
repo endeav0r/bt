@@ -51,6 +51,15 @@ enum {
        oper[1] */
     BOP_LOAD,
 
+    /* Conditionally Execute the next instruction.
+    *  The first operand is a 1-byte flag. If the flag is equal to 0, we skip
+    *  the following N instructions. Otherwise, we execute the following N
+    *  instructions.
+    *  The second operand is the number of instructions to execute, and is an
+    *  8-bit constant.
+    */
+    BOP_CE,
+
     /* HLT instruction */
     BOP_HLT,
 
@@ -189,9 +198,28 @@ BINS_2OP_DECL(zext)
 BINS_2OP_DECL(trun)
 BINS_2OP_DECL(load)
 BINS_2OP_DECL(store)
+BINS_2OP_DECL(ce)
 
 struct bins * bins_hlt     ();
 struct bins * bins_comment ();
 struct bins * bins_hook    (void (* hook) (void *));
+
+/*
+* These are convenience functions, or macro instructions. All convenience/macro
+* instructions will go here at the end of the header.
+*/
+struct list * bins_ror (const struct boper * dst,
+                        const struct boper * operand,
+                        const struct boper * bits);
+struct list * bins_ror_ (struct boper * dst,
+                         struct boper * operand,
+                         struct boper * bits);
+struct list * bins_asr (const struct boper * dst,
+                        const struct boper * operand,
+                        const struct boper * bits);
+struct list * bins_asr_ (struct boper * dst,
+                         struct boper * operand,
+                         struct boper * bits);
+
 
 #endif

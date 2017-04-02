@@ -634,7 +634,8 @@ int taint_trace_jit_startup (struct jit * jit,
     size_t offset = varstore_offset_create(varstore, "__JIT__", 64);
     uint8_t * u8buf = varstore_data_buf(varstore);
     /* Talk about some array-indexing pointer stuff */
-    *((uint64_t *) &(u8buf[offset])) = (uint64_t *) jit;
+    struct jit ** varstore_jit = (struct jit **) &(u8buf[offset]);
+    *varstore_jit = jit;
 
     return 0;
 }

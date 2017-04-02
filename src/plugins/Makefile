@@ -10,7 +10,8 @@ LIB=../*.o \
 	../bt/*.o \
 	../container/*.o \
 	../platform/*.o \
-	../plugins/*.o
+	../plugins/*.o \
+	-lcapstone
 INCLUDE=-I../
 
 all : $(OBJS) $(PLUGINS)

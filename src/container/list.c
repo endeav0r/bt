@@ -138,6 +138,38 @@ void list_pop_back (struct list * list) {
 }
 
 
+unsigned int list_length (const struct list * list) {
+    unsigned int l = 0;
+    const struct list_it * it = list->front;
+    while (it) {
+        l++;
+        it = it->next;
+    }
+    return l;
+}
+
+
+struct list * list_slice (
+    struct list * list,
+    struct list_it * first,
+    struct list_it * last
+) {
+    struct list * new = list_create();
+    struct list_it * it = first;
+    if (it == NULL) {
+        it = list_it(list);
+    }
+    if (last != NULL) {
+        last = list_it_next(last);
+    }
+    while (it != last) {
+        list_append(new, it);
+        it = list_it_next(it);
+    }
+    return new;
+}
+
+
 struct list_it * list_it (struct list * list) {
     return list->front;
 }
