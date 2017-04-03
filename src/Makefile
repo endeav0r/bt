@@ -18,6 +18,7 @@ all : $(OBJS)
 	make -C loader
 	make -C platform
 	make -C plugins
+	make -C lua
 	make -C test
 	$(CC) -o jit_example jit_example.c $(INCLUDE) $(OBJS) $(LIB) $(CFLAGS)
 	$(CC) -o jit_hsvm jit_hsvm.c $(INCLUDE) $(OBJS) $(LIB) $(CFLAGS)
@@ -32,6 +33,7 @@ clean :
 	make -C loader clean
 	make -C platform clean
 	make -C plugins clean
+	make -C lua clean
 	make -C test clean
 	rm -f jit_example
 	rm -f jit_hsvm
