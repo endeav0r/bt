@@ -25,7 +25,7 @@ all : $(OBJS)
 
 clean :
 	rm -f *.o
-	rm -r test_amd64
+	rm -f test_amd64
 	rm -f test_buf
 	rm -f test_byte_buf
 	rm -f test_list
