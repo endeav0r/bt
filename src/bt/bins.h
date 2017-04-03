@@ -162,6 +162,7 @@ struct bins *  bins_create_ (int op,
 void          bins_delete (struct bins * bins);
 struct bins * bins_copy   (const struct bins * bins);
 
+/* Caller is responsible for freeing this string. */
 char * bins_string (const struct bins * bins);
 
 #define BINS_3OP_DECL(XXX) \

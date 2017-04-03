@@ -99,11 +99,17 @@ struct boper * asarm_cs_reg (unsigned int cs_reg) {
 struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
     struct list * list = list_create();
     switch (arm->cc) {
+    /***************************************************************************
+    * ARM_CC_EQ
+    ***************************************************************************/
     case ARM_CC_EQ : {
         list_append_(list, bins_ce_(boper_variable(1, "Z"),
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_NE
+    ***************************************************************************/
     case ARM_CC_NE : {
         list_append_(list, bins_xor_(boper_variable(1, "NOT_Z"),
                                      boper_variable(1, "Z"),
@@ -112,11 +118,17 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_HS
+    ***************************************************************************/
     case ARM_CC_HS : {
         list_append_(list, bins_ce_(boper_variable(1, "C"),
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_LO
+    ***************************************************************************/
     case ARM_CC_LO : {
         list_append_(list, bins_xor_(boper_variable(1, "NOT_C"),
                                      boper_variable(1, "C"),
@@ -125,11 +137,17 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_MI
+    ***************************************************************************/
     case ARM_CC_MI : {
         list_append_(list, bins_ce_(boper_variable(1, "N"),
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_PL
+    ***************************************************************************/
     case ARM_CC_PL : {
         list_append_(list, bins_xor_(boper_variable(1, "NOT_N"),
                                      boper_variable(1, "N"),
@@ -138,11 +156,17 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_VS
+    ***************************************************************************/
     case ARM_CC_VS : {
         list_append_(list, bins_ce_(boper_variable(1, "V"),
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_VC
+    ***************************************************************************/
     case ARM_CC_VC : {
         list_append_(list, bins_xor_(boper_variable(1, "NOT_V"),
                                      boper_variable(1, "V"),
@@ -151,6 +175,9 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_HI
+    ***************************************************************************/
     case ARM_CC_HI : {
         list_append_(list, bins_xor_(boper_variable(1, "NOT_Z"),
                                      boper_variable(1, "Z"),
@@ -162,6 +189,9 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_LS
+    ***************************************************************************/
     case ARM_CC_LS : {
         list_append_(list, bins_xor_(boper_variable(1, "NOT_C"),
                                      boper_variable(1, "C"),
@@ -173,6 +203,9 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_GE
+    ***************************************************************************/
     case ARM_CC_GE : {
         list_append_(list, bins_cmpeq_(boper_variable(1, "N_EQ_V"),
                                        boper_variable(1, "N"),
@@ -181,6 +214,9 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_LT
+    ***************************************************************************/
     case ARM_CC_LT : {
         list_append_(list, bins_cmpeq_(boper_variable(1, "N_EQ_V"),
                                       boper_variable(1, "N"),
@@ -192,6 +228,9 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                    boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_GT
+    ***************************************************************************/
     case ARM_CC_GT : {
         list_append_(list, bins_xor_(boper_variable(1, "NOT_Z"),
                                      boper_variable(1, "Z"),
@@ -206,6 +245,9 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
                                     boper_constant(8, ins_n)));
         break;
     }
+    /***************************************************************************
+    * ARM_CC_LE
+    ***************************************************************************/
     case ARM_CC_LE :
         list_append_(list, bins_cmpeq_(boper_variable(1, "N_EQ_V"),
                                       boper_variable(1, "N"),
@@ -219,8 +261,14 @@ struct list * asarm_ins_cond (const cs_arm * arm, unsigned int ins_n) {
         list_append_(list, bins_ce_(boper_variable(1, "Z_AND_N_NEQ_V"),
                                     boper_constant(8, ins_n)));
         break;
+    /***************************************************************************
+    * ARM_CC_AL
+    ***************************************************************************/
     case ARM_CC_AL :
         break;
+    /***************************************************************************
+    * ARM_CC_INVALID
+    ***************************************************************************/
     case ARM_CC_INVALID :
         btlog_error("encountered ARM_CC_INVALID as an instruction condition");
         break;
@@ -238,6 +286,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
             return NULL;
 
         switch (op->shift.type) {
+        /***********************************************************************
+        * ARM_SFT_ASR
+        ***********************************************************************/
         case ARM_SFT_ASR :
             /* if shift_imm == 0 */
             if (op->shift.value == 0) {
@@ -285,7 +336,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
                 ODEL(asr_list);
             }
             return boper_variable(32, "shifter_operand");
-
+        /***********************************************************************
+        * ARM_SFT_LSL
+        ***********************************************************************/
         case ARM_SFT_LSL :
             if (op->shift.value == 0) {
                 list_append_(list, bins_or_(
@@ -312,7 +365,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
                 ));
                 return boper_variable(32, "shifter_operand");
             }
-
+        /***********************************************************************
+        * ARM_SFT_LSR
+        ***********************************************************************/
         case ARM_SFT_LSR :
             if (op->shift.value == 0) {
                 list_append_(list, bins_or_(
@@ -343,7 +398,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
                 boper_variable(32, "shifter_carry_out32")
             ));
             return boper_variable(32, "shifter_operand");
-
+        /***********************************************************************
+        * ARM_SFT_ROR
+        ***********************************************************************/
         case ARM_SFT_ROR :
             list_append_(list, bins_shr_(
                 boper_variable(32, "shifter_carry_out32"),
@@ -362,7 +419,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
             list_append_list(list, ror_ins);
             ODEL(ror_ins);
             return boper_variable(32, "shifter_operand");
-
+        /***********************************************************************
+        * ARM_SFT_RRX
+        ***********************************************************************/
         case ARM_SFT_RRX :
             list_append_(list, bins_shr_(boper_variable(32, "rrx_shr"),
                                          OCOPY(boper),
@@ -385,7 +444,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
                 boper_variable(32, "shifter_carry_out32")
             ));
             return boper_variable(32, "shifter_operand");
-
+        /***********************************************************************
+        * ARM_SFT_ASR_REG
+        ***********************************************************************/
         case ARM_SFT_ASR_REG : {
             struct boper * rs = asarm_cs_reg(op->shift.value);
 
@@ -477,6 +538,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
             ODEL(boper);
             return boper_variable(32, "shifter_operand");
         }
+        /***********************************************************************
+        * ARM_SFT_LSL_REG
+        ***********************************************************************/
         case ARM_SFT_LSL_REG : {
             struct boper * rs = asarm_cs_reg(op->shift.value);
 
@@ -567,6 +631,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
 
             return boper_variable(32, "shifter_operand");
         }
+        /***********************************************************************
+        * ARM_SFT_LSR_REG
+        ***********************************************************************/
         /* this is near-identical to ARM_SFT_LSL_REG */
         case ARM_SFT_LSR_REG : {
             struct boper * rs = asarm_cs_reg(op->shift.value);
@@ -663,6 +730,9 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
 
             return boper_variable(32, "shifter_operand");
         }
+        /***********************************************************************
+        * ARM_SFT_ROR_REG
+        ***********************************************************************/
         case ARM_SFT_ROR_REG : {
             struct boper * rs = asarm_cs_reg(op->shift.value);
 
@@ -738,12 +808,19 @@ struct boper * asarm_operand (struct list * list, cs_arm_op * op) {
 
             return boper_variable(32, "shifter_operand");
         }
+        /***********************************************************************
+        * ARM_SFT_RRX_REG
+        ***********************************************************************/
         case ARM_SFT_RRX_REG :
             btlog_error("UNHANDLED ARM_SFT_RRX_REG");
             break;
+        /***********************************************************************
+        * ARM_SFT_INVALID
+        ***********************************************************************/
         case ARM_SFT_INVALID :
-            btlog_error("ENCOUNTERED ARM_SFT_INVALID");
+            return boper;
         }
+        break;
     }
     case ARM_OP_IMM :
         btlog_error("UNHANDLED ARM_OP_IMM");
@@ -799,30 +876,79 @@ struct list * arm_translate_ins (
     struct list * list = list_create();
 
     switch (ins->id) {
+
+    /***************************************************************************
+    * ARM_INS_ADD
+    ***************************************************************************/
     case ARM_INS_ADD : {
         struct list * add_ins_list = list_create();
-        struct boper * dst = asarm_operand(add_ins_list, &(arm->operands[0]));
-        struct boper * lhs = asarm_operand(add_ins_list, &(arm->operands[1]));
-        struct boper * rhs = asarm_operand(add_ins_list, &(arm->operands[2]));
+        struct boper * rd = asarm_operand(add_ins_list, &(arm->operands[0]));
+        struct boper * rn = asarm_operand(add_ins_list, &(arm->operands[1]));
+        struct boper * shifter_operand;
+        shifter_operand = asarm_operand(add_ins_list, &(arm->operands[2]));
 
-        if ((dst == NULL) || (lhs == NULL) || (rhs == NULL)) {
+        if ((rd == NULL) || (rn == NULL) || (shifter_operand == NULL)) {
             btlog_error("ARM_INS_ADD an operand was null");
             return NULL;
         }
 
-        list_append_(add_ins_list, bins_add_(dst, lhs, rhs));
+        list_append_(add_ins_list, bins_add_(OCOPY(rd),
+                                             OCOPY(rn),
+                                             OCOPY(shifter_operand)));
+
+        if (arm->update_flags) {
+            if (arm->operands[0].reg == ARM_REG_R15)
+                list_append_(add_ins_list, bins_or_(
+                    boper_variable(32, "CPSR"),
+                    boper_variable(32, "SPSR"),
+                    boper_variable(32, "SPSR")
+                ));
+
+            list_append_(add_ins_list, bins_cmplts_(boper_variable(1, "N"),
+                                                    OCOPY(rd),
+                                                    boper_constant(32, 0)));
+            list_append_(add_ins_list, bins_cmpeq_(boper_variable(1, "Z"),
+                                                   OCOPY(rd),
+                                                   boper_constant(32, 0)));
+            list_append_(add_ins_list, bins_cmpltu_(boper_variable(1, "C"),
+                                                    OCOPY(rd),
+                                                    OCOPY(rn)));
+            list_append_(add_ins_list, bins_cmples_(
+                boper_variable(1, "VxorO"),
+                OCOPY(rn),
+                OCOPY(shifter_operand)
+            ));
+            list_append_(add_ins_list, bins_xor_(boper_variable(1, "V"),
+                                                 boper_variable(1, "VxorO"),
+                                                 boper_variable(1, "O")));
+        }
 
         struct list * cond_list = asarm_ins_cond(arm, list_length(add_ins_list));
         list_append_list(list, cond_list);
         list_append_list(list, add_ins_list);
+        list_append_(list, bins_add(boper_variable(32, "pc"),
+                                    boper_variable(32, "pc"),
+                                    boper_constant(32, ins->size)));
         ODEL(cond_list);
         ODEL(add_ins_list);
         break;
     }
-    default :
-        btlog_error("UNHANDLED INSTRUCTION %s", ins->mnemonic, ins->op_str);
+        
+    /***************************************************************************
+    * UNHANDLED INSTRUCTION
+    ***************************************************************************/
+    default : {
+        char error_buf[128];
+        unsigned int i;
+        for (i = 0; i < ins->size; i++)
+            sprintf(&(error_buf[i * 2]), "%02X", ins->bytes[i]);
+        btlog_error("UNHANDLED INSTRUCTION %s %s %s",
+                    error_buf, ins->mnemonic, ins->op_str);
         break;
     }
+    }
+
+    if (list_length(list) > 0)
 
     cs_free(insn, count);
     cs_close(&handle);

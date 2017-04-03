@@ -8,7 +8,27 @@
 
 LUALIB_API int luaopen_binarytoolkit (lua_State * L);
 
-int lbt_test (lua_State * L);
+
+const struct arch_source * lbt_arch_source_check (lua_State * L, int position);
+int lbt_arch_source_push (
+    lua_State * L,
+    const struct arch_source * arch_source
+);
+int lbt_arch_source_gc  (lua_State * L);
+
+int lbt_arch_source_hsvm (lua_State * L);
+int lbt_arch_source_arm  (lua_State * L);
+
+int lbt_arch_source_ip_variable_identifier (lua_State * L);
+int lbt_arch_source_ip_variable_bits       (lua_State * L);
+int lbt_arch_source_translate_ins          (lua_State * L);
+int lbt_arch_source_translate_block        (lua_State * L);
+
+
+struct bins * lbt_bins_check (lua_State * L, int position);
+int lbt_bins_absorb (lua_State * L, struct bins * bins_to_absorb);
+int lbt_bins_gc     (lua_State * L);
+int lbt_bins_string (lua_State * L);
 
 
 struct boper * lbt_boper_check (lua_State * L, int position);
