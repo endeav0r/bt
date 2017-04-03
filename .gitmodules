@@ -1,3 +1,0 @@
-[submodule "ext/libvex"]
-	path = ext/libvex
-	url = https://github.com/trailofbits/libvex
