@@ -880,6 +880,7 @@ struct list * arm_translate_ins (
     /***************************************************************************
     * ARM_INS_ADD
     ***************************************************************************/
+    case ARM_INS_ADC :
     case ARM_INS_ADD : {
         struct list * add_ins_list = list_create();
         struct boper * rd = asarm_operand(add_ins_list, &(arm->operands[0]));
@@ -895,6 +896,13 @@ struct list * arm_translate_ins (
         list_append_(add_ins_list, bins_add_(OCOPY(rd),
                                              OCOPY(rn),
                                              OCOPY(shifter_operand)));
+        if (ins->id == ARM_INS_ADC) {
+            list_append_(add_ins_list, bins_zext_(boper_variable(32, "C32"),
+                                                  boper_variable(1, "C")));
+            list_append_(add_ins_list, bins_add_(OCOPY(rd),
+                                                 boper_variable(32, "C32"),
+                                                 OCOPY(rd)));
+        }
 
         if (arm->update_flags) {
             if (arm->operands[0].reg == ARM_REG_R15)
@@ -913,14 +921,33 @@ struct list * arm_translate_ins (
             list_append_(add_ins_list, bins_cmpltu_(boper_variable(1, "C"),
                                                     OCOPY(rd),
                                                     OCOPY(rn)));
-            list_append_(add_ins_list, bins_cmples_(
-                boper_variable(1, "VxorO"),
-                OCOPY(rn),
-                OCOPY(shifter_operand)
+            list_append_(add_ins_list, bins_shr_(
+                boper_variable(32, "lhs32shr31"),
+                OCOPY(rd),
+                boper_constant(32, 31)
             ));
-            list_append_(add_ins_list, bins_xor_(boper_variable(1, "V"),
-                                                 boper_variable(1, "VxorO"),
-                                                 boper_variable(1, "O")));
+            list_append(add_ins_list, bins_shr_(
+                boper_variable(32, "rhs32shr31"),
+                OCOPY(rd),
+                boper_constant(32, 31)
+            ));
+            list_append_(add_ins_list, bins_cmpeq_(
+                boper_variable(1, "V"),
+                boper_variable(32, "lhs32shr31"),
+                boper_variable(32, "rhs32shr31")
+            ));
+            list_append_(add_ins_list, bins_ce_(boper_variable(1, "V"),
+                                                boper_constant(8, 2)));
+            list_append(add_ins_list, bins_shr_(
+                boper_variable(32, "dst32shr31"),
+                OCOPY(rd),
+                boper_constant(32, 31)
+            ));
+            list_append_(add_ins_list, bins_cmpeq_(
+                boper_variable(1, "V"),
+                boper_variable(32, "lhs32shr31"),
+                boper_variable(32, "dst32shr31")
+            ));
         }
 
         struct list * cond_list = asarm_ins_cond(arm, list_length(add_ins_list));
@@ -929,6 +956,9 @@ struct list * arm_translate_ins (
         list_append_(list, bins_add(boper_variable(32, "pc"),
                                     boper_variable(32, "pc"),
                                     boper_constant(32, ins->size)));
+        ODEL(rd);
+        ODEL(rn);
+        ODEL(shifter_operand);
         ODEL(cond_list);
         ODEL(add_ins_list);
         break;
