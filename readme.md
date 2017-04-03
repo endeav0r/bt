@@ -2,7 +2,12 @@
 
 Binary Toolkit is my latest formal binary analysis framework. For the moment, I am working on ensuring the IR is clean and functional, and building out the basic components for performing analysis.
 
-Currently I am not targeting, "Real," architectures to bt.
+## ARM
+
+Working on translating ARM. Current instructions as of 03APR2017:
+
+  * ADC
+  * ADD
 
 ## Should I care?
 
@@ -21,7 +26,7 @@ BT's IR should be:
 
   * A clean object-oriented implementation in C, with basic data structures, based off that which I created during (https://github.com/endeav0r/rdis).
   * Arithmetic operations operate over operands of the same bit-width. Truncate, zero-extend, and sign-extend are used extensively.
-  * All reads and writes are 8-bytes, and read/writes of a larger site are expanded during translation.
+  * All reads and writes are 8-bytes, and read/writes of a larger site are expanded during translation. **(This may change because it's super annoying)**
   * No explicit definition of a target architecture is required for JIT. JIT will just run.
 
 ## What works
